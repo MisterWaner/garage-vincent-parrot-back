@@ -1,10 +1,10 @@
 //Import modules
 import { DataTypes, Model } from "sequelize";
 
-export default (sequelize) => {
-    class User extends Model {}
+export default () => {
+    class Employee extends Model {}
 
-    User.init(
+    Admin.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -33,7 +33,6 @@ export default (sequelize) => {
             firstname: {
                 type: DataTypes.STRING,
                 allowNull: true,
-                
             },
             lastname: {
                 type: DataTypes.STRING,
@@ -41,12 +40,12 @@ export default (sequelize) => {
             },
         },
         {
-            modelName: "user",
-            tableName: "users",
+            modelName: "employee",
+            tableName: "employees",
             timestamps: false,
             sequelize,
         }
     );
 
-    return User;
+    return Employee;
 };
