@@ -1,7 +1,7 @@
 //Import modules
 import { DataTypes, Model } from "sequelize";
 
-export default () => {
+export default (sequelize) => {
     class Admin extends Model {}
 
     Admin.init(

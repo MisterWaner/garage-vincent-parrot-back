@@ -1,10 +1,10 @@
 //Import modules
 import { DataTypes, Model } from "sequelize";
 
-export default () => {
+export default (sequelize) => {
     class Employee extends Model {}
 
-    Admin.init(
+    Employee.init(
         {
             id: {
                 type: DataTypes.INTEGER,
