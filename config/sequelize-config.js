@@ -54,19 +54,19 @@ db.Slot = Slot(sequelize);
 
 //Car has many images
 Car.Image = db.Car.hasMany(db.Image, {
-    as: "images",
+    as: "cars",
     foreignKey: {
-        name: "imageId",
+        name: "carImmat",
         allowNull: false,
     },
-    sourceKey: "id"
+    sourceKey: "immat"
 });
 
 //Image belongs to one car
 Image.Car = db.Image.belongsTo(db.Car);
 
 //One slot belongs to many day
-Slot.Day = db.Slot.belongsToMany(db.Day, {
+Slot.Day = db.Slot.hasMany(db.Day, {
     as: "slots",
     foreignKey: {
         name: "slotId",
@@ -75,7 +75,7 @@ Slot.Day = db.Slot.belongsToMany(db.Day, {
     sourceKey: "id"
 });
 //One day has one slot
-Day.Slot = db.Day.hasOne(db.Slot);
+Day.Slot = db.Day.belongsTo(db.Slot);
 
 Option.Car = db.Option.belongsToMany(db.Car, {
     foreignKey: {
