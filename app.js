@@ -7,9 +7,19 @@ config();
 const app = express();
 
 /************************* Routes ************************/
+app.use(express.json())
+
+/************************* Routes ************************/
+
+//Import Routers
+import adminRouter from "./routes/admin-routes.js";
+
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
 });
+
+//Routes
+app.use("/api/admin", adminRouter);
 
 /*************************** Start Server *************************/
 

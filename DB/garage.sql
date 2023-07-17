@@ -1,7 +1,8 @@
 /************* Creation of Database *****************/
 
---Creation of user admin for database
-CREATE USER 'garage_admin'@'localhost' IDENTIFIED BY 'Ecf_#2023!';
+-- Creation of user admin for database
+DROP USER IF EXISTS 'garage_admin'@'localhost';
+CREATE USER IF NOT EXISTS 'garage_admin'@'localhost' IDENTIFIED BY 'Ecf_#2023!';
 
 -- Creation of database
 DROP DATABASE IF EXISTS garage;
