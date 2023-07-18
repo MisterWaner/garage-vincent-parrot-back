@@ -7,7 +7,7 @@ config();
 /************ Controllers  *************/
 
 //Creation
-async function createAdmin(req, res) {
+async function createEmployee(req, res) {
     const { email, password, confirmation, id } = req.body;
 
     try {
@@ -20,27 +20,27 @@ async function createAdmin(req, res) {
             });
         }
 
-        //Check if admin already exists
-        let admin = await db.Admin.findOne({
+        //Check if employee already exists
+        let employee = await db.Employee.findOne({
             where: { email: email },
             raw: true,
         });
-        if (admin !== null) {
-            return res.status(409).send(`L'admin ${email} existe déjà !`);
+        if (employee !== null) {
+            return res.status(409).json(`L'employé ${email} existe déjà !`);
         }
 
         //Hash password
-        db.Admin.beforeCreate(async (admin, options) => {
+        db.Employee.beforeCreate(async (employee, options) => {
             let hashPassword = await bcrypt.hash(
-                admin.password,
+                employee.password,
                 parseInt(process.env.BCRYPT_SALT_ROUND)
             );
-            admin.password = hashPassword;
-            admin.confirmation = admin.password;
+            employee.password = hashPassword;
+            employee.confirmation = employee.password;
         });
 
         //Admin creation
-        admin = await db.Admin.create({
+        employee = await db.Employee.create({
             id: id,
             email: email,
             password: password,
@@ -48,8 +48,8 @@ async function createAdmin(req, res) {
         });
 
         return res.json({
-            message: "Admin créé avec succès",
-            data: admin,
+            message: "Employé créé avec succès",
+            data: employee,
         });
     } catch (error) {
         console.log(error);
@@ -58,7 +58,7 @@ async function createAdmin(req, res) {
 }
 
 //login
-async function loginAdmin(req, res) {
+async function loginEmployee(req, res) {
     const { email, password } = req.body;
 
     try {
@@ -66,19 +66,19 @@ async function loginAdmin(req, res) {
             return res.send("Données manquantes");
         }
 
-        //Retrieve admin
-        let admin = await db.Admin.findOne({
+        //Retrieve employee
+        let employee = await db.Employee.findOne({
             where: { email: email },
             raw: true,
         });
-        if (!admin) {
-            res.status(400).json({ message: "Cette admin n'existe pas" });
+        if (!employee) {
+            res.status(400).json({ message: "Cet employé n'existe pas" });
         }
 
         //Check password
-        const validPwd = (enteredPwd, hashPwd) => {
+        const validPwd = (enteredPwd, originalPwd) => {
             return new Promise((resolve) => {
-                bcrypt.compare(enteredPwd, hashPwd, (error, res) => {
+                bcrypt.compare(enteredPwd, originalPwd, (error, res) => {
                     resolve(res);
                 });
             });
@@ -86,8 +86,8 @@ async function loginAdmin(req, res) {
         if (!validPwd) {
             return res.status(401).json({ message: "Mot de passe invalide" });
         }
-
-        return res.json({ message: "Bienvenue !", admin });
+        return res.json({ message: "Bienvenue !", employee });
+        
     } catch (error) {
         res.status(500).json("Database Error");
         console.log(error);
@@ -95,10 +95,10 @@ async function loginAdmin(req, res) {
 }
 
 //getAll
-async function getAllAdmins(req, res) {
+async function getAllEmployees(req, res) {
     try {
-        const admins = await db.Admin.findAll();
-        res.status(200).json(admins);
+        const employees = await db.Employee.findAll();
+        res.status(200).json(employees);
     } catch (error) {
         res.status(500).json("Database Error");
         console.log(error);
@@ -106,7 +106,7 @@ async function getAllAdmins(req, res) {
 }
 
 //getOne
-async function getAdmin(req, res) {
+async function getEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
         //check if id is ok
@@ -114,23 +114,23 @@ async function getAdmin(req, res) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //Retrieve the admin
-        let admin = await db.Admin.findOne({
+        //Retrieve the employee
+        let employee = await db.Employee.findOne({
             where: { id: id },
             raw: true,
         });
-        if (admin === null) {
-            res.status(404).json({ message: "Cet admin n'existe pas" });
+        if (employee === null) {
+            res.status(404).json({ message: "Cet employé n'existe pas" });
         }
-        res.status(200).json(admin);
+        res.status(200).json(employee);
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
         console.log(error);
     }
 }
 
-//Update Admin
-async function updateAdmin(req, res) {
+//Update Emloyee
+async function updateEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
         const { firstname, lastname, email } = req.body;
@@ -140,20 +140,20 @@ async function updateAdmin(req, res) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //retrieve the admin
-        let admin = await db.Admin.findOne(req.body, {
+        //retrieve the employee
+        let employee = await db.Employee.findOne(req.body, {
             where: { id: id },
             raw: true,
         });
 
-        if (admin === null) {
+        if (employee === null) {
             res.status(404).json({
-                message: "L'admin recherché n'existe pas",
+                message: "L'employé recherché n'existe pas",
             });
         }
 
         //update
-        admin = await db.Admin.update(
+        employee = await db.Employee.update(
             {
                 email: email,
                 firstname: firstname,
@@ -165,7 +165,7 @@ async function updateAdmin(req, res) {
         );
 
         res.json({
-            message: "Admin à jour !",
+            message: "Employé mis à jour !",
             data: { email, firstname, lastname },
         });
     } catch (error) {
@@ -174,8 +174,8 @@ async function updateAdmin(req, res) {
     }
 }
 
-//Delete Admin
-async function deleteAdmin(req, res) {
+//Delete Employee
+async function deleteEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
         //Check if id is OK
@@ -184,18 +184,18 @@ async function deleteAdmin(req, res) {
         }
 
         //deletation of admin
-        const admin = await db.Admin.destroy({
+        const employee = await db.Employee.destroy({
             where: { id: id },
             force: true,
         });
-        if (!admin) {
+        if (!employee) {
             return res
                 .status(404)
-                .json({ message: "L'admin recherché n'existe pas" });
+                .json({ message: "L'employé recherché n'existe pas" });
         }
 
         res.status(200).json({
-            message: "Cet admin a été supprimé avec succès",
+            message: "Cet employé a été supprimé avec succès",
         });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
@@ -204,10 +204,10 @@ async function deleteAdmin(req, res) {
 }
 
 export {
-    createAdmin,
-    loginAdmin,
-    getAllAdmins,
-    getAdmin,
-    updateAdmin,
-    deleteAdmin,
+    createEmployee,
+    getAllEmployees,
+    getEmployee,
+    loginEmployee,
+    updateEmployee,
+    deleteEmployee,
 };

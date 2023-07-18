@@ -6,13 +6,14 @@ import db from "./config/sequelize-config.js";
 config();
 const app = express();
 
-/************************* Routes ************************/
+/************************* Middlewares ************************/
 app.use(express.json())
 
 /************************* Routes ************************/
 
 //Import Routers
 import adminRouter from "./routes/admin-routes.js";
+import employeeRouter from "./routes/employee-routes.js";
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
@@ -20,6 +21,7 @@ app.get("/api", (req, res) => {
 
 //Routes
 app.use("/api/admin", adminRouter);
+app.use("/api/employee", employeeRouter);
 
 /*************************** Start Server *************************/
 

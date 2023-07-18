@@ -1,5 +1,8 @@
 //Import modules
 import { DataTypes, Model } from "sequelize";
+import { config } from "dotenv";
+import bcrypt from "bcrypt";
+config();
 
 export default (sequelize) => {
     class Admin extends Model {}
@@ -44,7 +47,7 @@ export default (sequelize) => {
             tableName: "admins",
             timestamps: false,
             sequelize,
-        }
+        },
     );
 
     return Admin;
