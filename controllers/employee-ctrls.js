@@ -121,7 +121,7 @@ async function getEmployee(req, res) {
 async function updateEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
-        const { firstname, lastname, email } = req.body;
+        let { firstname, lastname, email, password, confirmation } = req.body;
 
         //Check if id is ok
         if (!id) {
@@ -134,11 +134,20 @@ async function updateEmployee(req, res) {
             raw: true,
         });
 
-        if (employee === null) {
+        if (!employee) {
             res.status(404).json({
                 message: "L'employé recherché n'existe pas",
             });
         }
+
+        if (password !== confirmation) {
+            return res.status(400).json({
+                message: "Les mots de passes doivent être identiques",
+            });
+        }
+        //Hash password
+        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        confirmation = hashedPassword;
 
         //update
         employee = await db.Employee.update(
@@ -146,6 +155,8 @@ async function updateEmployee(req, res) {
                 email: email,
                 firstname: firstname,
                 lastname: lastname,
+                password: hashedPassword,
+                confirmation: confirmation
             },
             {
                 where: { id: id },
@@ -154,7 +165,7 @@ async function updateEmployee(req, res) {
 
         res.json({
             message: "Employé mis à jour !",
-            data: { email, firstname, lastname },
+            data: employee,
         });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });

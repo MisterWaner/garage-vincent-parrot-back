@@ -121,7 +121,7 @@ async function getAdmin(req, res) {
 async function updateAdmin(req, res) {
     try {
         const id = parseInt(req.params.id);
-        const { firstname, lastname, email } = req.body;
+        let { firstname, lastname, email, password, confirmation } = req.body;
 
         //Check if id is ok
         if (!id) {
@@ -133,12 +133,20 @@ async function updateAdmin(req, res) {
             where: { id: id },
             raw: true,
         });
-
-        if (admin === null) {
+        if (!admin) {
             res.status(404).json({
                 message: "L'admin recherché n'existe pas",
             });
         }
+
+        if (password !== confirmation) {
+            return res.status(400).json({
+                message: "Les mots de passes doivent être identiques",
+            });
+        }
+        //Hash password
+        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        confirmation = hashedPassword;
 
         //update
         admin = await db.Admin.update(
@@ -146,6 +154,8 @@ async function updateAdmin(req, res) {
                 email: email,
                 firstname: firstname,
                 lastname: lastname,
+                password: hashedPassword,
+                confirmation: confirmation
             },
             {
                 where: { id: id },
@@ -154,7 +164,7 @@ async function updateAdmin(req, res) {
 
         res.json({
             message: "Admin à jour !",
-            data: { email, firstname, lastname },
+            data: admin,
         });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
