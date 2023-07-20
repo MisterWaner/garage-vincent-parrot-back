@@ -8,7 +8,7 @@ config();
 
 //Creation
 async function createAdmin(req, res) {
-    const { email, password, confirmation, id } = req.body;
+    let { email, password, confirmation, id } = req.body;
 
     try {
         //Check if datas are valids
@@ -25,25 +25,19 @@ async function createAdmin(req, res) {
             where: { email: email },
             raw: true,
         });
-        if (admin !== null) {
+        if (admin) {
             return res.status(409).send(`L'admin ${email} existe déjà !`);
         }
 
         //Hash password
-        db.Admin.beforeCreate(async (admin, options) => {
-            let hashPassword = await bcrypt.hash(
-                admin.password,
-                parseInt(process.env.BCRYPT_SALT_ROUND)
-            );
-            admin.password = hashPassword;
-            admin.confirmation = admin.password;
-        });
+        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        confirmation = hashedPassword;
 
         //Admin creation
         admin = await db.Admin.create({
             id: id,
             email: email,
-            password: password,
+            password: hashedPassword,
             confirmation: confirmation,
         });
 
@@ -76,14 +70,8 @@ async function loginAdmin(req, res) {
         }
 
         //Check password
-        const validPwd = (enteredPwd, hashPwd) => {
-            return new Promise((resolve) => {
-                bcrypt.compare(enteredPwd, hashPwd, (error, res) => {
-                    resolve(res);
-                });
-            });
-        };
-        if (!validPwd) {
+        const isValid = await bcrypt.compare(password, admin.password)
+        if (!isValid) {
             return res.status(401).json({ message: "Mot de passe invalide" });
         }
 

@@ -8,7 +8,7 @@ config();
 
 //Creation
 async function createEmployee(req, res) {
-    const { email, password, confirmation, id } = req.body;
+    let { email, password, confirmation, id } = req.body;
 
     try {
         //Check if datas are valids
@@ -25,25 +25,19 @@ async function createEmployee(req, res) {
             where: { email: email },
             raw: true,
         });
-        if (employee !== null) {
+        if (employee) {
             return res.status(409).json(`L'employé ${email} existe déjà !`);
         }
 
         //Hash password
-        db.Employee.beforeCreate(async (employee, options) => {
-            let hashPassword = await bcrypt.hash(
-                employee.password,
-                parseInt(process.env.BCRYPT_SALT_ROUND)
-            );
-            employee.password = hashPassword;
-            employee.confirmation = employee.password;
-        });
+        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        confirmation = hashedPassword;
 
-        //Admin creation
+        //Employee creation
         employee = await db.Employee.create({
             id: id,
             email: email,
-            password: password,
+            password: hashedPassword,
             confirmation: confirmation,
         });
 
@@ -76,14 +70,8 @@ async function loginEmployee(req, res) {
         }
 
         //Check password
-        const validPwd = (enteredPwd, originalPwd) => {
-            return new Promise((resolve) => {
-                bcrypt.compare(enteredPwd, originalPwd, (error, res) => {
-                    resolve(res);
-                });
-            });
-        };
-        if (!validPwd) {
+        const isValid = await bcrypt.compare(password, employee.password)
+        if (!isValid) {
             return res.status(401).json({ message: "Mot de passe invalide" });
         }
         return res.json({ message: "Bienvenue !", employee });
