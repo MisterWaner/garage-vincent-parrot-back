@@ -14,14 +14,16 @@ app.use(express.json())
 //Import Routers
 import adminRouter from "./routes/admin-routes.js";
 import employeeRouter from "./routes/employee-routes.js";
+import carRouter from "./routes/car-routes.js";
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
 });
 
 //Routes
-app.use("/api/admin", adminRouter);
-app.use("/api/employee", employeeRouter);
+app.use("/api/admins", adminRouter);
+app.use("/api/employees", employeeRouter);
+app.use('/api/cars', carRouter);
 
 /*************************** Start Server *************************/
 

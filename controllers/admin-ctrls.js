@@ -107,7 +107,7 @@ async function getAdmin(req, res) {
             where: { id: id },
             raw: true,
         });
-        if (admin === null) {
+        if (!admin) {
             res.status(404).json({ message: "Cet admin n'existe pas" });
         }
         res.status(200).json(admin);
