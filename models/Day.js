@@ -16,10 +16,11 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            is_open: {
+            isOpen: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
             },
+            
         },
         {
             modelName: "day",

@@ -1,3 +1,4 @@
+//Import modules
 import db from "../config/sequelize-config.js";
 
 /************ Controllers  *************/

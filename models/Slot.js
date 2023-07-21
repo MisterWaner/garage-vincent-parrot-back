@@ -12,11 +12,11 @@ export default (sequelize) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            opening_hour: {
+            openingHour: {
                 type: DataTypes.TIME,
                 allowNull: false,
             },
-            closing_hour: {
+            closingHour: {
                 type: DataTypes.TIME,
                 allowNull: false,
             },

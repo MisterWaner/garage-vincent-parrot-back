@@ -15,6 +15,8 @@ app.use(express.json())
 import adminRouter from "./routes/admin-routes.js";
 import employeeRouter from "./routes/employee-routes.js";
 import carRouter from "./routes/car-routes.js";
+import dayRouter from "./routes/day-routes.js";
+import slotRouter from "./routes/slot-routes.js";
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
@@ -24,6 +26,8 @@ app.get("/api", (req, res) => {
 app.use("/api/admins", adminRouter);
 app.use("/api/employees", employeeRouter);
 app.use('/api/cars', carRouter);
+app.use('/api/days', dayRouter);
+app.use('/api/slots', slotRouter);
 
 /*************************** Start Server *************************/
 
