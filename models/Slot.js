@@ -12,6 +12,10 @@ export default (sequelize) => {
                 allowNull: false,
                 primaryKey: true,
             },
+            name: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             openingHour: {
                 type: DataTypes.TIME,
                 allowNull: false,

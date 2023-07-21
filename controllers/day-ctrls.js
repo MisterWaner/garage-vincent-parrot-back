@@ -56,7 +56,7 @@ async function getDay(req, res) {
     try {
         const id = parseInt(req.params.id);
 
-        //check if day is ok
+        //check if id is ok
         if (!id) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
@@ -89,7 +89,7 @@ async function updateDay(req, res) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //retrieve the admin
+        //retrieve the day
         let day = await db.Day.findOne(req.body, {
             where: { id: id },
             raw: true,
