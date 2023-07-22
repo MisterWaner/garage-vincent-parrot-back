@@ -19,6 +19,7 @@ import dayRouter from "./routes/day-routes.js";
 import slotRouter from "./routes/slot-routes.js";
 import imageRouter from "./routes/image-routes.js";
 import optionRouter from "./routes/option-routes.js";
+import reviewRouter from "./routes/review-routes.js";
 
 
 app.get("/api", (req, res) => {
@@ -33,6 +34,7 @@ app.use('/api/days', dayRouter);
 app.use('/api/slots', slotRouter);
 app.use('/api/images', imageRouter);
 app.use('/api/options', optionRouter);
+app.use('/api/reviews', reviewRouter);
 
 /*************************** Start Server *************************/
 

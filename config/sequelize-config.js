@@ -128,6 +128,6 @@ Review.Employee = db.Review.belongsToMany(db.Employee, {
     through: db.Employee_Review,
 });
 
-db.sequelize.sync({alter: true});
+db.sequelize.sync({});
 
 export default db;
