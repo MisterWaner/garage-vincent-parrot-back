@@ -139,7 +139,7 @@ async function deleteDay(req, res) {
             where: { id: id },
             force: true,
         });
-        if (!id) {
+        if (!day) {
             return res
                 .status(404)
                 .json({ message: "La journée recherchée n'est pas répertoriée" });

@@ -17,6 +17,9 @@ import employeeRouter from "./routes/employee-routes.js";
 import carRouter from "./routes/car-routes.js";
 import dayRouter from "./routes/day-routes.js";
 import slotRouter from "./routes/slot-routes.js";
+import imageRouter from "./routes/image-routes.js";
+import optionRouter from "./routes/option-routes.js";
+
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
@@ -28,6 +31,8 @@ app.use("/api/employees", employeeRouter);
 app.use('/api/cars', carRouter);
 app.use('/api/days', dayRouter);
 app.use('/api/slots', slotRouter);
+app.use('/api/images', imageRouter);
+app.use('/api/options', optionRouter);
 
 /*************************** Start Server *************************/
 

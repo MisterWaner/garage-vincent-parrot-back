@@ -1,39 +1,39 @@
 //Import modules
 import db from "../config/sequelize-config.js";
 
-/************** Controllers *************/
+/************** Controllers ***************/
 
-//Add slot
-async function addSlot(req, res) {
-    const { id, name, openingHour, closingHour } = req.body;
+//Add image
+async function addImage(req, res) {
+    const { id, name, description, url } = req.body;
 
     try {
-        if ( !name || !openingHour || !closingHour) {
+        if (!name || !description || !url) {
             return res.send("Des données sont manquantes !");
         }
 
-        //Check if slot exist already exist in DB.
-        let slot = await db.Slot.findOne({
+        //Check if image exist already exist in DB.
+        let image = await db.Image.findOne({
             where: { name: name },
             raw: true,
         });
-        if (slot) {
+        if (image) {
             return res
                 .status(409)
-                .send(`Ce créneau : ${name} est déjà répertorié`);
+                .send(`Cette image : ${name} est déjà répertoriée`);
         }
 
-        //Add slot
-        slot = await db.Slot.create({
+        //Add image
+        image = await db.Image.create({
             id: id,
             name: name,
-            openingHour: openingHour,
-            closingHour: closingHour,
+            description: description,
+            url: url,
         });
 
         return res.json({
-            message: `Le créneau horaire ${name} a bien été ajouté`,
-            data: slot,
+            message: `L'image ${name} a bien été ajoutée`,
+            data: image,
         });
     } catch (error) {
         console.log(error);
@@ -41,19 +41,19 @@ async function addSlot(req, res) {
     }
 }
 
-//Get all slots
-async function getAllSlots(req, res) {
+//Get all images
+async function getAllImages(req, res) {
     try {
-        const slots = await db.Slot.findAll();
-        res.status(200).json(slots);
+        const images = await db.Image.findAll();
+        res.status(200).json(images);
     } catch (error) {
         res.status(500).json("Database Error");
         console.log(error);
     }
 }
 
-//Get one slot
-async function getSlot(req, res) {
+//Get one image
+async function getImage(req, res) {
     try {
         const id = parseInt(req.params.id);
 
@@ -62,27 +62,27 @@ async function getSlot(req, res) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //Retrieve the slot
-        let slot = await db.Slot.findOne({
+        //Retrieve the image
+        let image = await db.Image.findOne({
             where: { id: id },
             raw: true,
         });
-        if (!slot) {
+        if (!image) {
             res.status(404).json({
-                message: "Cet horaire n'est pas répertorié !",
+                message: "Cette image n'est pas répertoriée !",
             });
         }
-        res.status(200).json(slot);
+        res.status(200).json(image);
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
         console.log(error);
     }
 }
 
-//Update slot
-async function updateSlot(req, res) {
+//Update image
+async function updateImage(req, res) {
     const id = parseInt(req.params.id);
-    let { openingHour, closingHour, name } = req.body;
+    let { name, description, url } = req.body;
 
     try {
         //Check if id is ok
@@ -90,27 +90,27 @@ async function updateSlot(req, res) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //retrieve the slot
-        let slot = await db.Slot.findOne(req.body, {
+        //retrieve the image
+        let image = await db.Image.findOne(req.body, {
             where: { id: id },
             raw: true,
         });
-        if (!slot) {
+        if (!image) {
             res.status(404).json({
-                message: "Le créneau recherché n'est pas répertorié",
+                message: "L'image recherchée n'est pas répertoriée",
             });
         }
 
-        if (!openingHour || !closingHour || !name) {
+        if (!name || !description || !url) {
             return res.send("Des données sont manquantes !");
         }
 
         //update
-        slot = await db.Slot.update(
+        image = await db.Image.update(
             {
-                openingHour: openingHour,
-                closingHour: closingHour,
-                name: name
+                name: name,
+                description: description,
+                url: url,
             },
             {
                 where: { id: id },
@@ -118,8 +118,8 @@ async function updateSlot(req, res) {
         );
 
         res.json({
-            message: "Créneau à jour !",
-            data: slot,
+            message: "Image à jour !",
+            data: image,
         });
     } catch (error) {
         res.status(500).json("Database Error");
@@ -127,8 +127,8 @@ async function updateSlot(req, res) {
     }
 }
 
-//Delete Slot
-async function deleteSlot(req, res) {
+//Delete Image
+async function deleteImage(req, res) {
     try {
         const id = parseInt(req.params.id);
         //Check if id is OK
@@ -136,19 +136,19 @@ async function deleteSlot(req, res) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //deletation of slot
-        const slot = await db.Slot.destroy({
+        //deletation of image
+        const image = await db.Image.destroy({
             where: { id: id },
             force: true,
         });
-        if (!slot) {
+        if (!image) {
             return res
                 .status(404)
-                .json({ message: "L'horaire recherché n'est pas répertorié" });
+                .json({ message: "L'image recherchée n'est pas répertoriée" });
         }
 
         res.status(200).json({
-            message: "Cet horaire a été supprimé avec succès",
+            message: "Cette image a été supprimée avec succès",
         });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
@@ -156,4 +156,4 @@ async function deleteSlot(req, res) {
     }
 }
 
-export { addSlot, getAllSlots, getSlot, updateSlot, deleteSlot };
+export { addImage, getAllImages, getImage, updateImage, deleteImage };

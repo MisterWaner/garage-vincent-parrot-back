@@ -1,6 +1,12 @@
 //Import modules
 import { Router } from "express";
-import { addDay, getDay, getAllDays, updateDay, deleteDay } from "../controllers/day-ctrls.js";
+import {
+    addDay,
+    getDay,
+    getAllDays,
+    updateDay,
+    deleteDay,
+} from "../controllers/day-ctrls.js";
 
 const dayRouter = Router();
 

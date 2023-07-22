@@ -16,9 +16,16 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            description: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             url: {
                 type: DataTypes.STRING,
                 allowNull: false,
+                validate: {
+                    isUrl: true
+                }
             },
         },
         {
