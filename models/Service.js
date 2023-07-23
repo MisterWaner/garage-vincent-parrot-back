@@ -22,8 +22,12 @@ export default (sequelize) => {
             },
             phone: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                allowNull: false,
                 unique: true,
+                validate: {
+                    isNumeric: true,
+                    len: 10
+                }
             },
             email: {
                 type: DataTypes.STRING,

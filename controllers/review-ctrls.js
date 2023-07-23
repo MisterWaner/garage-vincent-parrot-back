@@ -26,7 +26,7 @@ async function addReview(req, res) {
                 );
         }
 
-        //Add option
+        //Add review
         review = await db.Review.create({
             id: id,
             title: title,

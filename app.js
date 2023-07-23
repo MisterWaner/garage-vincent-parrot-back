@@ -7,7 +7,7 @@ config();
 const app = express();
 
 /************************* Middlewares ************************/
-app.use(express.json())
+app.use(express.json());
 
 /************************* Routes ************************/
 
@@ -20,7 +20,7 @@ import slotRouter from "./routes/slot-routes.js";
 import imageRouter from "./routes/image-routes.js";
 import optionRouter from "./routes/option-routes.js";
 import reviewRouter from "./routes/review-routes.js";
-
+import serviceRouter from "./routes/service-routes.js";
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
@@ -29,12 +29,13 @@ app.get("/api", (req, res) => {
 //Routes
 app.use("/api/admins", adminRouter);
 app.use("/api/employees", employeeRouter);
-app.use('/api/cars', carRouter);
-app.use('/api/days', dayRouter);
-app.use('/api/slots', slotRouter);
-app.use('/api/images', imageRouter);
-app.use('/api/options', optionRouter);
-app.use('/api/reviews', reviewRouter);
+app.use("/api/cars", carRouter);
+app.use("/api/days", dayRouter);
+app.use("/api/slots", slotRouter);
+app.use("/api/images", imageRouter);
+app.use("/api/options", optionRouter);
+app.use("/api/reviews", reviewRouter);
+app.use("/api/services", serviceRouter);
 
 /*************************** Start Server *************************/
 
