@@ -1,5 +1,10 @@
 /********************** Import modules *********************/
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import flash from "express-flash";
+import session from "express-session";
+import methodOverride from "method-override";
 import { config } from "dotenv";
 import db from "./config/sequelize-config.js";
 
@@ -7,8 +12,33 @@ config();
 const app = express();
 
 /************************* Middlewares ************************/
+app.use(
+    cors({
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        allowedHeaders:
+            "Origin, X-Requested-With, x-access-token, role, Content, Accept, Content-Type, Authorization",
+    })
+);
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
+app.use(flash());
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+    })
+);
+app.use(
+    cookieParser({
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        allowedHeaders:
+            "Origin, X-Requested-With, x-access-token, role, Content, Accept, Content-Type, Authorization",
+    })
+);
+app.use(methodOverride("_method"))
 /************************* Routes ************************/
 
 //Import Routers
@@ -21,6 +51,8 @@ import imageRouter from "./routes/image-routes.js";
 import optionRouter from "./routes/option-routes.js";
 import reviewRouter from "./routes/review-routes.js";
 import serviceRouter from "./routes/service-routes.js";
+import flash from "express-flash";
+import session from "express-session";
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
