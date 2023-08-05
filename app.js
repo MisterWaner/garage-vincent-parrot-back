@@ -51,8 +51,8 @@ import imageRouter from "./routes/image-routes.js";
 import optionRouter from "./routes/option-routes.js";
 import reviewRouter from "./routes/review-routes.js";
 import serviceRouter from "./routes/service-routes.js";
-import flash from "express-flash";
-import session from "express-session";
+import roleRouter from "./routes/role-routes.js";
+
 
 app.get("/api", (req, res) => {
     res.send("API en ligne et fonctionnelle");
@@ -68,6 +68,7 @@ app.use("/api/images", imageRouter);
 app.use("/api/options", optionRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/services", serviceRouter);
+app.use("/api/roles", roleRouter);
 
 /*************************** Start Server *************************/
 

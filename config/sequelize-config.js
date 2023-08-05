@@ -18,6 +18,7 @@ import Review from "../models/Review.js";
 import Service from "../models/Service.js";
 import Slot from "../models/Slot.js";
 import Employee_Review from "../models/Employee_Review.js";
+import Role from "../models/Role.js";
 
 //Create connexion between DB and sequelize
 const sequelize = new Sequelize(
@@ -37,6 +38,7 @@ const db = {}
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.Role = Role(sequelize);
 db.Admin = Admin(sequelize);
 db.Employee = Employee(sequelize);
 db.Day = Day(sequelize);

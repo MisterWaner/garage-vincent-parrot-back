@@ -2,24 +2,28 @@
 import { DataTypes, Model } from "sequelize";
 
 export default (sequelize) => {
-    class Employee extends Model {}
+    class Role extends Model {}
 
-    Employee.init(
+    Role.init(
         {
             id: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.SMALLINT,
                 autoIncrement: true,
                 allowNull: false,
                 primaryKey: true,
             },
+            name: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
         },
         {
-            modelName: "employee",
-            tableName: "employees",
+            modelName: "role",
+            tableName: "roles",
             timestamps: false,
             sequelize,
         }
     );
 
-    return Employee;
+    return Role;
 };
