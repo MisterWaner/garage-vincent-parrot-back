@@ -19,6 +19,7 @@ import Service from "../models/Service.js";
 import Slot from "../models/Slot.js";
 import Employee_Review from "../models/Employee_Review.js";
 import Role from "../models/Role.js";
+import User from "../models/User.js";
 
 //Create connexion between DB and sequelize
 const sequelize = new Sequelize(
@@ -39,6 +40,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.Role = Role(sequelize);
+db.User = User(sequelize);
 db.Admin = Admin(sequelize);
 db.Employee = Employee(sequelize);
 db.Day = Day(sequelize);
@@ -53,6 +55,19 @@ db.Service = Service(sequelize);
 db.Slot = Slot(sequelize);
 
 //Relation
+
+//Role has many users
+Role.User = db.Role.hasMany(db.User, {
+    as: "users",
+    foreignKey: {
+        name: "roleId",
+        allowNull: false,
+        defaultValue: "2"
+    },
+    sourceKey: "id"
+});
+//User belongs to one role
+User.Role = db.User.belongsTo(db.Role);
 
 //Car has many images
 Car.Image = db.Car.hasMany(db.Image, {

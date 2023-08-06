@@ -52,6 +52,7 @@ import optionRouter from "./routes/option-routes.js";
 import reviewRouter from "./routes/review-routes.js";
 import serviceRouter from "./routes/service-routes.js";
 import roleRouter from "./routes/role-routes.js";
+import userRouter from "./routes/user-routes.js";
 
 
 app.get("/api", (req, res) => {
@@ -69,6 +70,7 @@ app.use("/api/options", optionRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/services", serviceRouter);
 app.use("/api/roles", roleRouter);
+app.use("/api/users", userRouter);
 
 /*************************** Start Server *************************/
 
