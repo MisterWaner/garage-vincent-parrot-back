@@ -62,7 +62,6 @@ Role.User = db.Role.hasMany(db.User, {
     foreignKey: {
         name: "roleId",
         allowNull: false,
-        defaultValue: "2"
     },
     sourceKey: "id"
 });

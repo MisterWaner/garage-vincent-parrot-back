@@ -30,7 +30,10 @@ async function createAdmin(req, res) {
         }
 
         //Hash password
-        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.BCRYPT_SALT_ROUND)
+        );
         confirmation = hashedPassword;
 
         //Admin creation
@@ -70,7 +73,7 @@ async function loginAdmin(req, res) {
         }
 
         //Check password
-        const isValid = await bcrypt.compare(password, admin.password)
+        const isValid = await bcrypt.compare(password, admin.password);
         if (!isValid) {
             return res.status(401).json({ message: "Mot de passe invalide" });
         }
@@ -145,7 +148,10 @@ async function updateAdmin(req, res) {
             });
         }
         //Hash password
-        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.BCRYPT_SALT_ROUND)
+        );
         confirmation = hashedPassword;
 
         //update
@@ -155,7 +161,7 @@ async function updateAdmin(req, res) {
                 firstname: firstname,
                 lastname: lastname,
                 password: hashedPassword,
-                confirmation: confirmation
+                confirmation: confirmation,
             },
             {
                 where: { id: id },

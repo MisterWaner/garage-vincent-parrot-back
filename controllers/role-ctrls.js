@@ -4,11 +4,11 @@ import db from "../config/sequelize-config.js";
 /************** Controllers ***************/
 
 //Add Roles
-async function addRole(req, res) {
-    const { id, name } = req.body;
+async function createRole(req, res) {
+    const { id, name, description } = req.body;
 
     try {
-        if (!name) {
+        if (!name || !description) {
             return res.send("Des données sont manquantes !");
         }
 
@@ -23,10 +23,11 @@ async function addRole(req, res) {
                 .send(`Ce role : ${name} est déjà répertorié`);
         }
 
-        //Add role
+        //create role
         role = await db.Role.create({
             id: id,
             name: name,
+            description: description,
         });
 
         return res.json({
@@ -80,7 +81,7 @@ async function getRole(req, res) {
 //Update role
 async function updateRole(req, res) {
     const id = parseInt(req.params.id);
-    let { name } = req.body;
+    let { name, description } = req.body;
 
     try {
         //Check if id is ok
@@ -99,7 +100,7 @@ async function updateRole(req, res) {
             });
         }
 
-        if (!name) {
+        if (!name || !description) {
             return res.send("Des données sont manquantes !");
         }
 
@@ -107,6 +108,7 @@ async function updateRole(req, res) {
         role = await db.Role.update(
             {
                 name: name,
+                description: description,
             },
             {
                 where: { id: id },
@@ -152,4 +154,4 @@ async function deleteRole(req, res) {
     }
 }
 
-export { addRole, getAllRoles, getRole, updateRole, deleteRole };
+export { createRole, getAllRoles, getRole, updateRole, deleteRole };

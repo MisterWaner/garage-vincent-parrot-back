@@ -1,7 +1,7 @@
 //Import modules
 import { Router } from "express";
 import {
-    addRole,
+    createRole,
     deleteRole,
     getAllRoles,
     getRole,
@@ -10,7 +10,7 @@ import {
 
 const roleRouter = Router();
 
-roleRouter.post("/add", addRole);
+roleRouter.post("/add", createRole);
 roleRouter.get("/", getAllRoles);
 roleRouter.get("/:id", getRole);
 roleRouter.put("/:id", updateRole);

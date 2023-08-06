@@ -16,6 +16,10 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            description: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            }
         },
         {
             modelName: "role",
