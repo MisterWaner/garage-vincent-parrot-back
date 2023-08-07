@@ -7,52 +7,6 @@ config();
 /************ Controllers  *************/
 
 //Creation
-async function createAdmin(req, res) {
-    let { email, password, confirmation, id } = req.body;
-
-    try {
-        //Check if datas are valids
-        if (!email || !password || !confirmation) {
-            return res.send("Données manquantes");
-        } else if (password !== confirmation) {
-            return res.status(400).json({
-                message: "Les mots de passes doivent être identiques",
-            });
-        }
-
-        //Check if admin already exists
-        let admin = await db.Admin.findOne({
-            where: { email: email },
-            raw: true,
-        });
-        if (admin) {
-            return res.status(409).send(`L'admin ${email} existe déjà !`);
-        }
-
-        //Hash password
-        const hashedPassword = await bcrypt.hash(
-            password,
-            parseInt(process.env.BCRYPT_SALT_ROUND)
-        );
-        confirmation = hashedPassword;
-
-        //Admin creation
-        admin = await db.Admin.create({
-            id: id,
-            email: email,
-            password: hashedPassword,
-            confirmation: confirmation,
-        });
-
-        return res.json({
-            message: "Admin créé avec succès",
-            data: admin,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Erreur lors de la création" });
-    }
-}
 
 //login
 async function loginAdmin(req, res) {
@@ -208,7 +162,6 @@ async function deleteAdmin(req, res) {
 }
 
 export {
-    createAdmin,
     loginAdmin,
     getAllAdmins,
     getAdmin,

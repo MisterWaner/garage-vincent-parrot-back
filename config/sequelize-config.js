@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import { Sequelize } from "sequelize";
 
 //Start config of sequelize
-config()
+config();
 
 //Import models
 import Admin from "../models/Admin.js";
@@ -34,7 +34,7 @@ const sequelize = new Sequelize(
 );
 
 //Relation initialization
-const db = {}
+const db = {};
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
@@ -63,10 +63,35 @@ Role.User = db.Role.hasMany(db.User, {
         name: "roleId",
         allowNull: false,
     },
-    sourceKey: "id"
+    sourceKey: "id",
 });
 //User belongs to one role
 User.Role = db.User.belongsTo(db.Role);
+
+//User has many admin
+User.Admin = db.User.hasMany(db.Admin, {
+    as: "admins",
+    foreignKey: {
+        name: "userId",
+        allowNull: false,
+    },
+    sourceKey: "id",
+});
+
+//Admin belongs to users
+Admin.User = db.Admin.belongsTo(db.User);
+
+//User has many employee
+User.Employee = db.User.hasMany(db.Employee, {
+    as: "employees",
+    foreignKey: {
+        name: "userId",
+        allowNull: false,
+    },
+    sourceKey: "id",
+});
+//Employee belongs to users
+Employee.User = db.Employee.belongsTo(db.User);
 
 //Car has many images
 Car.Image = db.Car.hasMany(db.Image, {
@@ -75,7 +100,7 @@ Car.Image = db.Car.hasMany(db.Image, {
         name: "carImmat",
         allowNull: false,
     },
-    sourceKey: "immat"
+    sourceKey: "immat",
 });
 
 //Image belongs to one car
@@ -88,7 +113,7 @@ Slot.Day = db.Slot.hasMany(db.Day, {
         name: "slotId",
         allowNull: false,
     },
-    sourceKey: "id"
+    sourceKey: "id",
 });
 //One day has one slot
 Day.Slot = db.Day.belongsTo(db.Slot);

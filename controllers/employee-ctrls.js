@@ -6,51 +6,6 @@ config();
 
 /************ Controllers  *************/
 
-//Creation
-async function createEmployee(req, res) {
-    let { email, password, confirmation, id } = req.body;
-
-    try {
-        //Check if datas are valids
-        if (!email || !password || !confirmation) {
-            return res.send("Données manquantes");
-        } else if (password !== confirmation) {
-            return res.status(400).json({
-                message: "Les mots de passes doivent être identiques",
-            });
-        }
-
-        //Check if employee already exists
-        let employee = await db.Employee.findOne({
-            where: { email: email },
-            raw: true,
-        });
-        if (employee) {
-            return res.status(409).json(`L'employé ${email} existe déjà !`);
-        }
-
-        //Hash password
-        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
-        confirmation = hashedPassword;
-
-        //Employee creation
-        employee = await db.Employee.create({
-            id: id,
-            email: email,
-            password: hashedPassword,
-            confirmation: confirmation,
-        });
-
-        return res.json({
-            message: "Employé créé avec succès",
-            data: employee,
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Erreur lors de la création" });
-    }
-}
-
 //login
 async function loginEmployee(req, res) {
     const { email, password } = req.body;
@@ -203,7 +158,6 @@ async function deleteEmployee(req, res) {
 }
 
 export {
-    createEmployee,
     getAllEmployees,
     getEmployee,
     loginEmployee,

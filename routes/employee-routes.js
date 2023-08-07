@@ -1,7 +1,6 @@
 //Import modules
 import { Router } from "express";
 import {
-    createEmployee,
     getAllEmployees,
     getEmployee,
     loginEmployee,
@@ -13,7 +12,6 @@ const employeeRouter = Router();
 
 employeeRouter.get('/', getAllEmployees);
 employeeRouter.get('/:id', getEmployee);
-employeeRouter.post('/creation', createEmployee);
 employeeRouter.post('/login', loginEmployee);
 employeeRouter.put('/:id', updateEmployee);
 employeeRouter.delete('/:id', deleteEmployee);

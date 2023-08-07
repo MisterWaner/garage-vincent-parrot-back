@@ -21,11 +21,11 @@ async function createUser(req, res) {
         }
 
         //Check if user already exists
-        let user = await db.User.findOne({
+        let newUser = await db.User.findOne({
             where: { email: email },
             raw: true,
         });
-        if (user) {
+        if (newUser) {
             return res.status(409).send(`L'utilisateur ${email} existe déjà !`);
         }
 
@@ -37,7 +37,7 @@ async function createUser(req, res) {
         confirmation = hashedPassword;
 
         //User creation
-        user = await db.User.create({
+        newUser = await db.User.create({
             id: id,
             email: email,
             password: hashedPassword,
@@ -45,9 +45,23 @@ async function createUser(req, res) {
             roleId: roleId,
         });
 
+        //Admin creation
+        if (roleId === 1) {
+            await db.Admin.create({
+                userId: newUser.id,
+            });
+        }
+
+        //Employee creation
+        if (roleId === 2) {
+            await db.Employee.create({
+                userId: newUser.id,
+            });
+        }
+
         return res.json({
             message: "Utilisateur créé avec succès",
-            data: user,
+            data: newUser,
         });
     } catch (error) {
         console.log(error);
