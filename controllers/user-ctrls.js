@@ -8,7 +8,7 @@ config();
 
 //Creation
 async function createUser(req, res) {
-    const { email, password, confirmation, roleId, id } = req.body;
+    let { email, password, confirmation, roleId, id } = req.body;
 
     try {
         //Check if datas are valids
