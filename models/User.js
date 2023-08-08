@@ -32,6 +32,10 @@ export default (sequelize) => {
                 is: /^[0-9a-z]{64}$/i, //constraint regex
                 allowNull: false,
             },
+            previousPassword: {
+                type: DataTypes.STRING(64),
+                allowNull: true,
+            },
             firstname: {
                 type: DataTypes.STRING,
                 allowNull: true,

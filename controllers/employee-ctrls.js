@@ -25,12 +25,11 @@ async function loginEmployee(req, res) {
         }
 
         //Check password
-        const isValid = await bcrypt.compare(password, employee.password)
+        const isValid = await bcrypt.compare(password, employee.password);
         if (!isValid) {
             return res.status(401).json({ message: "Mot de passe invalide" });
         }
         return res.json({ message: "Bienvenue !", employee });
-        
     } catch (error) {
         res.status(500).json("Database Error");
         console.log(error);
@@ -40,7 +39,7 @@ async function loginEmployee(req, res) {
 //getAll
 async function getAllEmployees(req, res) {
     try {
-        const employees = await db.Employee.findAll();
+        const employees = await db.User.findAll({ where: { roleId: 2 } });
         res.status(200).json(employees);
     } catch (error) {
         res.status(500).json("Database Error");
@@ -58,14 +57,16 @@ async function getEmployee(req, res) {
         }
 
         //Retrieve the employee
-        let employee = await db.Employee.findOne({
-            where: { id: id },
+        let employee = await db.User.findOne({
+            where: { id: id, roleId: 2 },
             raw: true,
         });
         if (employee === null) {
-            res.status(404).json({ message: "Cet employé n'existe pas" });
+            return res
+                .status(404)
+                .json({ message: "Cet employé n'existe pas" });
         }
-        res.status(200).json(employee);
+        return res.status(200).json(employee);
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
         console.log(error);
@@ -84,13 +85,13 @@ async function updateEmployee(req, res) {
         }
 
         //retrieve the employee
-        let employee = await db.Employee.findOne(req.body, {
-            where: { id: id },
+        let employee = await db.User.findOne(req.body, {
+            where: { id: id, roleId: 2 },
             raw: true,
         });
 
         if (!employee) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "L'employé recherché n'existe pas",
             });
         }
@@ -101,24 +102,27 @@ async function updateEmployee(req, res) {
             });
         }
         //Hash password
-        const hashedPassword = await bcrypt.hash(password, parseInt(process.env.BCRYPT_SALT_ROUND));
+        const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.BCRYPT_SALT_ROUND)
+        );
         confirmation = hashedPassword;
 
         //update
-        employee = await db.Employee.update(
+        employee = await db.User.update(
             {
                 email: email,
                 firstname: firstname,
                 lastname: lastname,
                 password: hashedPassword,
-                confirmation: confirmation
+                confirmation: confirmation,
             },
             {
-                where: { id: id },
+                where: { id: id, roleId: 2 },
             }
         );
 
-        res.json({
+        return res.json({
             message: "Employé mis à jour !",
             data: employee,
         });
@@ -138,8 +142,8 @@ async function deleteEmployee(req, res) {
         }
 
         //deletation of admin
-        const employee = await db.Employee.destroy({
-            where: { id: id },
+        const employee = await db.User.destroy({
+            where: { id: id, roleId: 2 },
             force: true,
         });
         if (!employee) {

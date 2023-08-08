@@ -42,7 +42,7 @@ async function loginAdmin(req, res) {
 //getAll
 async function getAllAdmins(req, res) {
     try {
-        const admins = await db.Admin.findAll();
+        const admins = await db.User.findAll({ where: { roleId: 1 } });
         res.status(200).json(admins);
     } catch (error) {
         res.status(500).json("Database Error");
@@ -60,14 +60,14 @@ async function getAdmin(req, res) {
         }
 
         //Retrieve the admin
-        let admin = await db.Admin.findOne({
-            where: { id: id },
+        let admin = await db.User.findOne({
+            where: { id: id, roleId: 1 },
             raw: true,
         });
         if (!admin) {
-            res.status(404).json({ message: "Cet admin n'existe pas" });
+            return res.status(404).json({ message: "Cet admin n'existe pas" });
         }
-        res.status(200).json(admin);
+        return res.status(200).json(admin);
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
         console.log(error);
@@ -86,12 +86,12 @@ async function updateAdmin(req, res) {
         }
 
         //retrieve the admin
-        let admin = await db.Admin.findOne(req.body, {
-            where: { id: id },
+        let admin = await db.User.findOne(req.body, {
+            where: { id: id, roleId: 1 },
             raw: true,
         });
         if (!admin) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "L'admin recherché n'existe pas",
             });
         }
@@ -109,7 +109,7 @@ async function updateAdmin(req, res) {
         confirmation = hashedPassword;
 
         //update
-        admin = await db.Admin.update(
+        admin = await db.User.update(
             {
                 email: email,
                 firstname: firstname,
@@ -118,7 +118,7 @@ async function updateAdmin(req, res) {
                 confirmation: confirmation,
             },
             {
-                where: { id: id },
+                where: { id: id, roleId: 1 },
             }
         );
 
@@ -142,8 +142,8 @@ async function deleteAdmin(req, res) {
         }
 
         //deletation of admin
-        const admin = await db.Admin.destroy({
-            where: { id: id },
+        const admin = await db.User.destroy({
+            where: { id: id, roleId: 1 },
             force: true,
         });
         if (!admin) {
@@ -161,10 +161,4 @@ async function deleteAdmin(req, res) {
     }
 }
 
-export {
-    loginAdmin,
-    getAllAdmins,
-    getAdmin,
-    updateAdmin,
-    deleteAdmin,
-};
+export { loginAdmin, getAllAdmins, getAdmin, updateAdmin, deleteAdmin };
