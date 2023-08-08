@@ -60,8 +60,8 @@ app.get("/api", (req, res) => {
 });
 
 //Routes
-app.use("/api/admins", adminRouter);
-app.use("/api/employees", employeeRouter);
+app.use("/api/users/admins", adminRouter);
+app.use("/api/users/employees", employeeRouter);
 app.use("/api/cars", carRouter);
 app.use("/api/days", dayRouter);
 app.use("/api/slots", slotRouter);
