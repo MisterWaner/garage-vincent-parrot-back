@@ -41,6 +41,14 @@ export default (sequelize) => {
                 values: ['diesel', 'essence', 'hybrid', 'electric'],
                 allowNull: false
             },
+            image: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            color: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             isSold: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,

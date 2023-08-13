@@ -44,6 +44,10 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            services: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            }
         },
         {
             modelName: "user",
