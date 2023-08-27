@@ -12,7 +12,7 @@ export default (sequelize) => {
                 unique: true,
                 primaryKey: true,
             },
-            mark: {
+            brand: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
@@ -28,6 +28,10 @@ export default (sequelize) => {
                 },
                 allowNull: false,
             },
+            color: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             kilometers: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false,
@@ -36,16 +40,12 @@ export default (sequelize) => {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false,
             },
-            energy: {
+            motor: {
                 type: DataTypes.ENUM,
                 values: ['diesel', 'essence', 'hybrid', 'electric'],
                 allowNull: false
             },
             image: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            color: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
