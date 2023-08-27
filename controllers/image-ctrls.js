@@ -1,6 +1,7 @@
 //Import modules
 import db from "../config/sequelize-config.js";
 
+
 /************** Controllers ***************/
 
 //Add image
@@ -8,6 +9,8 @@ async function addImage(req, res) {
     const { id, name, description, url } = req.body;
 
     try {
+        const imagePath = req.file.path;
+
         if (!name || !description || !url) {
             return res.send("Des données sont manquantes !");
         }
@@ -28,7 +31,7 @@ async function addImage(req, res) {
             id: id,
             name: name,
             description: description,
-            url: url,
+            url: imagePath,
         });
 
         return res.json({
@@ -82,7 +85,7 @@ async function getImage(req, res) {
 //Update image
 async function updateImage(req, res) {
     const id = parseInt(req.params.id);
-    let { name, description, url } = req.body;
+    let { name, description } = req.body;
 
     try {
         //Check if id is ok
@@ -101,7 +104,7 @@ async function updateImage(req, res) {
             });
         }
 
-        if (!name || !description || !url) {
+        if (!name || !description ) {
             return res.send("Des données sont manquantes !");
         }
 
@@ -110,7 +113,6 @@ async function updateImage(req, res) {
             {
                 name: name,
                 description: description,
-                url: url,
             },
             {
                 where: { id: id },

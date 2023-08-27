@@ -45,6 +45,10 @@ export default (sequelize) => {
                 values: ['diesel', 'essence', 'hybrid', 'electric'],
                 allowNull: false
             },
+            puissance: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             image: {
                 type: DataTypes.STRING,
                 allowNull: false

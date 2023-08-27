@@ -11,8 +11,6 @@ import Employee from "../models/Employee.js";
 import Day from "../models/Day.js";
 import Car from "../models/Car.js";
 import Image from "../models/Image.js";
-import Option from "../models/Option.js";
-import Option_Car from "../models/Option_Car.js";
 import Car_Employee from "../models/Car_Employee.js";
 import Review from "../models/Review.js";
 import Service from "../models/Service.js";
@@ -46,8 +44,6 @@ db.Employee = Employee(sequelize);
 db.Day = Day(sequelize);
 db.Car = Car(sequelize);
 db.Image = Image(sequelize);
-db.Option = Option(sequelize);
-db.Option_Car = Option_Car(sequelize);
 db.Car_Employee = Car_Employee(sequelize);
 db.Employee_Review = Employee_Review(sequelize);
 db.Review = Review(sequelize);
@@ -117,23 +113,6 @@ Slot.Day = db.Slot.hasMany(db.Day, {
 });
 //One day has one slot
 Day.Slot = db.Day.belongsTo(db.Slot);
-
-Option.Car = db.Option.belongsToMany(db.Car, {
-    foreignKey: {
-        name: "optionId",
-        allowNull: false,
-    },
-    sourceKey: "id",
-    through: db.Option_Car,
-});
-Car.Option = db.Car.belongsToMany(db.Option, {
-    foreignKey: {
-        name: "carImmat",
-        allowNull: false,
-    },
-    sourceKey: "immat",
-    through: db.Option_Car,
-});
 
 Car.Employee = db.Car.belongsToMany(db.Employee, {
     foreignKey: {

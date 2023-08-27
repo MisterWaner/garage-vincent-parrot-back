@@ -5,17 +5,24 @@ import db from "../config/sequelize-config.js";
 
 //Add car
 async function addCar(req, res) {
-    const { immat, mark, model, year, kilometers, price, energy } = req.body;
+    const { immat, brand, model, year, kilometers, price, motor, color, isSold, puissance, image } = req.body;
 
     try {
+
+        const imagePath = req.file.path;
+
         if (
             !immat ||
-            !mark ||
+            !brand ||
             !model ||
             !year ||
             !kilometers ||
             !price ||
-            !energy
+            !motor ||
+            !color ||
+            !isSold ||
+            !puissance ||
+            !image
         ) {
             return res.send("Des données sont manquantes !");
         }
@@ -34,12 +41,16 @@ async function addCar(req, res) {
         //Add car
         car = await db.Car.create({
             immat: immat,
-            mark: mark,
+            brand: brand,
             model: model,
             year: year,
             kilometers: kilometers,
             price: price,
-            energy: energy,
+            motor: motor,
+            color: color,
+            isSold: isSold,
+            puissance: puissance,
+            image: imagePath,
         });
 
         return res.json({
@@ -93,10 +104,11 @@ async function getAllCars(req, res) {
 //Update car
 async function updateCar(req, res) {
     const immatriculation = req.params.id;
-    let { immat, mark, model, year, kilometers, price, energy, isSold } =
+    let { immat, brand, model, year, kilometers, price, motor, isSold, color, puissance, imagePath } =
         req.body;
 
     try {
+        imagePath = req.file.path;
         //Check if id is ok
         if (!immatriculation) {
             return res.status(400).json({ message: "Paramètre manquant" });
@@ -115,13 +127,9 @@ async function updateCar(req, res) {
 
         if (
             !immat ||
-            !mark ||
+            !brand ||
             !model ||
-            !year ||
-            !kilometers ||
-            !price ||
-            !energy ||
-            !isSold
+            !year
         ) {
             return res.send("Des données sont manquantes !");
         }
@@ -130,13 +138,16 @@ async function updateCar(req, res) {
         car = await db.Car.update(
             {
                 immat: immat,
-                mark: mark,
+                brand: brand,
                 model: model,
                 year: year,
                 kilometers: kilometers,
                 price: price,
-                energy: energy,
+                motor: motor,
                 isSold: isSold,
+                color: color,
+                puissance: puissance,
+                image: imagePath,
             },
             {
                 where: { immat: immatriculation },
