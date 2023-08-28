@@ -19,18 +19,18 @@ export default (sequelize) => {
                 validate: {
                     isEmail: true, //data validation
                 },
-                allowNull: false,
+                allowNull: true,
                 unique: true, //unique email
             },
             password: {
                 type: DataTypes.STRING(64),
                 is: /^[0-9a-z]{64}$/i, //constraint regex
-                allowNull: false,
+                allowNull: true,
             },
             confirmation: {
                 type: DataTypes.STRING(64),
                 is: /^[0-9a-z]{64}$/i, //constraint regex
-                allowNull: false,
+                allowNull: true,
             },
             previousPassword: {
                 type: DataTypes.STRING(64),
@@ -46,7 +46,7 @@ export default (sequelize) => {
             },
             services: {
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             }
         },
         {

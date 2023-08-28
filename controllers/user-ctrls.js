@@ -7,84 +7,108 @@ config();
 
 /************ Controllers  *************/
 
-//Creation
-async function createUser(req, res) {
+//Creation of an admin
+async function createAdmin(req, res) {
     try {
-        let { email, password, confirmation, roleId, id } = req.body;
-        let hashedPassword;
-        let newUser;
-        //Check if datas are valids
-        if (roleId === 1) {
-            if (!email || !password || !confirmation) {
-                return res.send("Données manquantes");
-            } else if (password !== confirmation) {
-                return res.status(400).json({
-                    message: "Les mots de passes doivent être identiques",
-                });
-            }
+        const { email, password, confirmation, roleId = 1 } = req.body;
 
-            //Check if user already exists
-            newUser = await db.User.findOne({
-                where: { email: email },
-                raw: true,
+        //Check if datas are valid
+        if (!email || !password || !confirmation) {
+            return res.send("Des données sont manquantes");
+        }
+        if (password !== confirmation) {
+            return res.status(400).json({
+                message: "Les mots de passes doivent être identiques",
             });
-            if (newUser) {
-                return res
-                    .status(409)
-                    .send(`L'utilisateur ${email} existe déjà !`);
-            }
-            hashedPassword = await bcrypt.hash(
-                password,
-                parseInt(process.env.BCRYPT_SALT_ROUND)
-            );
-            confirmation = hashedPassword;
-        } else if (roleId === 2) {
-            if (!email) {
-                return res.send("Données manquantes");
-            }
-
-            //Check if user already exists
-            newUser = await db.User.findOne({
-                where: { email: email },
-                raw: true,
-            });
-            if (newUser) {
-                return res
-                    .status(409)
-                    .send(`L'utilisateur ${email} existe déjà !`);
-            }
-
-            hashedPassword = generateTemporaryPassword(64);
-            confirmation = hashedPassword;
-
+        }
+        //Check if admin already exist
+        let admin = await db.User.findOne({
+            where: { email: email },
+            raw: true,
+        });
+        if (admin) {
+            return res
+                .status(409)
+                .json({ message: "Utilisateur déjà existant" });
         }
 
+        //Hash password
+        const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.BCRYPT_SALT_ROUND)
+        );
+        password = hashedPassword;
+        confirmation = hashedPassword;
+
         //User creation
-        newUser = await db.User.create({
-            id: id,
+        admin = await db.User.create({
             email: email,
-            password: hashedPassword,
+            password: password,
             confirmation: confirmation,
             roleId: roleId,
         });
 
-        if (roleId === 1) {
-            await db.Admin.create({
-                userId: newUser.id,
-            });
-        } else if (roleId === 2) {
-            await db.Employee.create({
-                userId: newUser.id,
-            });
-        }
+        await admin.save();
 
-        return res.json({
-            message: "Utilisateur créé avec succès",
-            data: newUser,
+        return res.status(201).json({
+            message: "Utilisateur créé",
+            data: admin,
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Erreur lors de la création" });
+        res.status(500).json({ message: "Erreur lors de la création" });
+    }
+}
+
+//Creation of employee
+async function createEmployee(req, res) {
+    try {
+        const { email, lastname, firstname, services} = req.body;
+        let password;
+        const roleId = 2;
+
+        console.log("Request body", req.body);
+        //Check if datas are valid
+        if (!email || !lastname || !firstname || !services) {
+            return res.send("Des données sont manquantes");
+        }
+        //Check if employee already exist
+        let employee = await db.User.findOne({
+            where: { email: email },
+            raw: true,
+        });
+        if (employee) {
+            return res
+                .status(409)
+                .json({ message: "Utilisateur déjà existant" });
+        }
+
+        //generate password
+        password = generateTemporaryPassword(64);
+        //Hash password
+        const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.BCRYPT_SALT_ROUND)
+        )
+
+        //create employee
+        employee = await db.User.create({
+            email: email,
+            lastname: lastname,
+            firstname: firstname,
+            password: hashedPassword,
+            services: services,
+            roleId: roleId,
+        });
+
+        return res.status(201).json({
+            message: "Utilisateur créé",
+            data: employee,
+            password : password
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Erreur lors de la création" });
     }
 }
 
@@ -145,7 +169,9 @@ async function getUser(req, res) {
             raw: true,
         });
         if (!user) {
-            res.status(404).json({ message: "Cet utilisateur n'existe pas" });
+            res.status(404).json({
+                message: "Cet utilisateur n'existe pas",
+            });
         }
         res.status(200).json(user);
     } catch (error) {
@@ -241,4 +267,4 @@ async function deleteUser(req, res) {
     }
 }
 
-export { createUser, getAllUsers, getUser, updateUser, deleteUser };
+export { createAdmin, createEmployee, getAllUsers, getUser, updateUser, deleteUser };

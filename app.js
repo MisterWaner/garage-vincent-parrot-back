@@ -7,7 +7,7 @@ import session from "express-session";
 import methodOverride from "method-override";
 import { config } from "dotenv";
 import db from "./config/sequelize-config.js";
-import {join, dirname} from "path";
+import {dirname} from "path";
 import {fileURLToPath} from "url";
 
 config();
