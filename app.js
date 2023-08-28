@@ -7,9 +7,14 @@ import session from "express-session";
 import methodOverride from "method-override";
 import { config } from "dotenv";
 import db from "./config/sequelize-config.js";
+import {join, dirname} from "path";
+import {fileURLToPath} from "url";
 
 config();
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /************************* Middlewares ************************/
 app.use(
@@ -39,6 +44,7 @@ app.use(
     })
 );
 app.use(methodOverride("_method"))
+app.use('/uploads', express.static(`${__dirname}/uploads`));
 /************************* Routes ************************/
 
 //Import Routers

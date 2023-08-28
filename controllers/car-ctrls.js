@@ -5,11 +5,21 @@ import db from "../config/sequelize-config.js";
 
 //Add car
 async function addCar(req, res) {
-    const { immat, brand, model, year, kilometers, price, motor, color, isSold, puissance, image } = req.body;
+    const {
+        immat,
+        brand,
+        model,
+        year,
+        kilometers,
+        price,
+        motor,
+        color,
+        puissance,
+        image,
+    } = req.body;
 
     try {
-
-        const imagePath = req.file.path;
+        const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
 
         if (
             !immat ||
@@ -20,7 +30,6 @@ async function addCar(req, res) {
             !price ||
             !motor ||
             !color ||
-            !isSold ||
             !puissance ||
             !image
         ) {
@@ -48,10 +57,11 @@ async function addCar(req, res) {
             price: price,
             motor: motor,
             color: color,
-            isSold: isSold,
             puissance: puissance,
-            image: imagePath,
+            image: imageUrl,
         });
+
+        await car.save();
 
         return res.json({
             message: `La voiture immatriculée ${immat} a bien été ajoutée`,
@@ -59,7 +69,7 @@ async function addCar(req, res) {
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Erreur lors de la création" });
+        res.status(500).json({ message: "Erreur lors de la création" });
     }
 }
 
@@ -104,8 +114,19 @@ async function getAllCars(req, res) {
 //Update car
 async function updateCar(req, res) {
     const immatriculation = req.params.id;
-    let { immat, brand, model, year, kilometers, price, motor, isSold, color, puissance, imagePath } =
-        req.body;
+    let {
+        immat,
+        brand,
+        model,
+        year,
+        kilometers,
+        price,
+        motor,
+        isSold,
+        color,
+        puissance,
+        imagePath,
+    } = req.body;
 
     try {
         imagePath = req.file.path;
@@ -125,12 +146,7 @@ async function updateCar(req, res) {
             });
         }
 
-        if (
-            !immat ||
-            !brand ||
-            !model ||
-            !year
-        ) {
+        if (!immat || !brand || !model || !year) {
             return res.send("Des données sont manquantes !");
         }
 
@@ -156,7 +172,7 @@ async function updateCar(req, res) {
 
         res.json({
             message: "Voiture mise à jour !",
-            data: car
+            data: car,
         });
     } catch (error) {
         res.status(500).json("Database Error");
@@ -164,7 +180,7 @@ async function updateCar(req, res) {
     }
 }
 
-//Delete 
+//Delete
 async function deleteCar(req, res) {
     try {
         const immat = req.params.id;
@@ -179,9 +195,9 @@ async function deleteCar(req, res) {
             force: true,
         });
         if (!car) {
-            return res
-                .status(404)
-                .json({ message: "La voiture recherchée n'est pas répertoriée" });
+            return res.status(404).json({
+                message: "La voiture recherchée n'est pas répertoriée",
+            });
         }
 
         res.status(200).json({
@@ -192,6 +208,5 @@ async function deleteCar(req, res) {
         console.log(error);
     }
 }
-
 
 export { addCar, getCar, getAllCars, updateCar, deleteCar };

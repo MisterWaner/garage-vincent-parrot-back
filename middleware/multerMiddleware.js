@@ -1,15 +1,15 @@
 import multer from "multer";
 
-const uploadDir = path.join(__dirname, "../uploads/cars");
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, uploadDir);
+        cb(null, 'uploads/cars');
     },
     filename: (req, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-        const ext = file.originalname.split(".").pop();
-        cb(null, `${file.fieldname}-${uniqueSuffix}.${ext}`);
+        const {brand, model } = req.body;
+        const fileExtenstion = file.originalname.split('.').pop();
+        const fileName = `${brand}-${model}-${Date.now()}.${fileExtenstion}`;
+        cb(null, fileName);
     },
 });
 

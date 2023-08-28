@@ -41,8 +41,7 @@ export default (sequelize) => {
                 allowNull: false,
             },
             motor: {
-                type: DataTypes.ENUM,
-                values: ['diesel', 'essence', 'hybrid', 'electric'],
+                type: DataTypes.STRING,
                 allowNull: false
             },
             puissance: {
@@ -52,11 +51,6 @@ export default (sequelize) => {
             image: {
                 type: DataTypes.STRING,
                 allowNull: false
-            },
-            isSold: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: false,
             },
         },
         {

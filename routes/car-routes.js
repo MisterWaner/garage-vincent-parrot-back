@@ -11,7 +11,7 @@ import upload from "../middleware/multerMiddleware.js";
 
 const carRouter = Router();
 
-carRouter.post("/add", upload.single("image"), addCar);
+carRouter.post("/", upload.single("image"), addCar);
 carRouter.get("/", getAllCars);
 carRouter.get("/:id", getCar);
 carRouter.put("/:id", upload.single("image"), updateCar);
