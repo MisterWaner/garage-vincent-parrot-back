@@ -1,26 +1,27 @@
 //Import modules
 import db from "../config/sequelize-config.js";
+import generateCarRefence from "../functions/generateCarReference.js";
 
 /************ Controllers  *************/
 
 //Add car
 async function addCar(req, res) {
-    const {
-        immat,
-        brand,
-        model,
-        year,
-        kilometers,
-        price,
-        motor,
-        color,
-        puissance,
-        image,
-    } = req.body;
-
     try {
-        const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
+        const {
+            immat,
+            brand,
+            model,
+            year,
+            kilometers,
+            price,
+            motor,
+            color,
+            puissance,
+            image,
+        } = req.body;
 
+        console.log(req.file);
+        console.log(req.body);
         if (
             !immat ||
             !brand ||
@@ -46,13 +47,16 @@ async function addCar(req, res) {
                 .status(409)
                 .send(`La voiture immatriculée ${immat} est déjà répertoriée`);
         }
-
+        const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
+        //Generate reference
+        const reference = generateCarRefence(brand, model);
         //Add car
         car = await db.Car.create({
             immat: immat,
             brand: brand,
             model: model,
             year: year,
+            reference: reference,
             kilometers: kilometers,
             price: price,
             motor: motor,
@@ -61,9 +65,7 @@ async function addCar(req, res) {
             image: imageUrl,
         });
 
-        await car.save();
-
-        return res.json({
+        return res.status(200).json({
             message: `La voiture immatriculée ${immat} a bien été ajoutée`,
             data: car,
         });

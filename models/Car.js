@@ -32,6 +32,10 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            reference: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             kilometers: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false,
