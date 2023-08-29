@@ -3,6 +3,7 @@ import db from "../config/sequelize-config.js";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import generateTemporaryPassword from "../functions/generateTemporaryPassword.js";
+import generateEmail from "../functions/generateEmail.js";
 config();
 
 /************ Controllers  *************/
@@ -10,7 +11,8 @@ config();
 //Creation of an admin
 async function createAdmin(req, res) {
     try {
-        const { email, password, confirmation, roleId = 1 } = req.body;
+        const { email, password, confirmation } = req.body;
+        const roleId = 1;
 
         //Check if datas are valid
         if (!email || !password || !confirmation) {
@@ -48,10 +50,13 @@ async function createAdmin(req, res) {
             roleId: roleId,
         });
 
-        await admin.save();
+        //Admin creation
+        admin = await db.Admin.create({
+            adminId: admin.id,
+        })
 
         return res.status(201).json({
-            message: "Utilisateur créé",
+            message: "Admin créé",
             data: admin,
         });
     } catch (error) {
@@ -63,18 +68,17 @@ async function createAdmin(req, res) {
 //Creation of employee
 async function createEmployee(req, res) {
     try {
-        const { email, lastname, firstname, services} = req.body;
+        const { lastname, firstname, services } = req.body;
         let password;
         const roleId = 2;
 
-        console.log("Request body", req.body);
         //Check if datas are valid
-        if (!email || !lastname || !firstname || !services) {
+        if (!lastname || !firstname || !services) {
             return res.send("Des données sont manquantes");
         }
         //Check if employee already exist
         let employee = await db.User.findOne({
-            where: { email: email },
+            where: { email: generateEmail(firstname, lastname) },
             raw: true,
         });
         if (employee) {
@@ -89,11 +93,11 @@ async function createEmployee(req, res) {
         const hashedPassword = await bcrypt.hash(
             password,
             parseInt(process.env.BCRYPT_SALT_ROUND)
-        )
+        );
 
         //create employee
         employee = await db.User.create({
-            email: email,
+            email: generateEmail(firstname, lastname),
             lastname: lastname,
             firstname: firstname,
             password: hashedPassword,
@@ -101,47 +105,20 @@ async function createEmployee(req, res) {
             roleId: roleId,
         });
 
+        employee = await db.Employee.create({
+            userId: employee.id
+        })
+
         return res.status(201).json({
             message: "Utilisateur créé",
             data: employee,
-            password : password
-        })
+            password: password,
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Erreur lors de la création" });
     }
 }
-
-// //login
-// async function (req, res) {
-//     const { email, password } = req.body;
-
-//     try {
-//         if (!email || !password) {
-//             return res.send("Données manquantes");
-//         }
-
-//         //Retrieve admin
-//         let admin = await db.Admin.findOne({
-//             where: { email: email },
-//             raw: true,
-//         });
-//         if (!admin) {
-//             res.status(400).json({ message: "Cette admin n'existe pas" });
-//         }
-
-//         //Check password
-//         const isValid = await bcrypt.compare(password, admin.password);
-//         if (!isValid) {
-//             return res.status(401).json({ message: "Mot de passe invalide" });
-//         }
-
-//         return res.json({ message: "Bienvenue !", admin });
-//     } catch (error) {
-//         res.status(500).json("Database Error");
-//         console.log(error);
-//     }
-// }
 
 //getAll User
 async function getAllUsers(req, res) {
@@ -267,4 +244,11 @@ async function deleteUser(req, res) {
     }
 }
 
-export { createAdmin, createEmployee, getAllUsers, getUser, updateUser, deleteUser };
+export {
+    createAdmin,
+    createEmployee,
+    getAllUsers,
+    getUser,
+    updateUser,
+    deleteUser,
+};
