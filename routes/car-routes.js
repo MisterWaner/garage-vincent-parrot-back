@@ -14,7 +14,7 @@ const carRouter = Router();
 carRouter.post("/", upload.single("image"), addCar);
 carRouter.get("/", getAllCars);
 carRouter.get("/:id", getCar);
-carRouter.put("/:id", upload.single("image"), updateCar);
+carRouter.put("/:id", updateCar);
 carRouter.delete("/:id", deleteCar);
 
 export default carRouter;

@@ -116,7 +116,7 @@ async function getAllCars(req, res) {
 //Update car
 async function updateCar(req, res) {
     const immatriculation = req.params.id;
-    let {
+    const {
         immat,
         brand,
         model,
@@ -124,48 +124,56 @@ async function updateCar(req, res) {
         kilometers,
         price,
         motor,
-        isSold,
         color,
         puissance,
-        imagePath,
     } = req.body;
 
     try {
-        imagePath = req.file.path;
         //Check if id is ok
         if (!immatriculation) {
             return res.status(400).json({ message: "Paramètre manquant" });
         }
 
-        //retrieve the admin
-        let car = await db.Car.findOne(req.body, {
+        //retrieve the car
+        let updatedCar = await db.Car.findOne(req.body, {
             where: { immat: immatriculation },
             raw: true,
         });
-        if (!car) {
-            res.status(404).json({
+        if (!updatedCar) {
+            return res.status(404).json({
                 message: "La voiture recherchée n'est pas répertoriée",
             });
         }
 
-        if (!immat || !brand || !model || !year) {
+        if (
+            !immat ||
+            !brand ||
+            !model ||
+            !year ||
+            !kilometers ||
+            !price ||
+            !motor ||
+            !color ||
+            !puissance
+        ) {
             return res.send("Des données sont manquantes !");
         }
 
+        //Generate reference
+        const reference = generateCarRefence(brand, model);
         //update
-        car = await db.Car.update(
+        updatedCar = await db.Car.update(
             {
                 immat: immat,
                 brand: brand,
                 model: model,
-                year: year,
-                kilometers: kilometers,
-                price: price,
+                reference: reference,
+                year: parseInt(year),
+                kilometers: parseInt(kilometers),
+                price: parseInt(price),
                 motor: motor,
-                isSold: isSold,
                 color: color,
-                puissance: puissance,
-                image: imagePath,
+                puissance: parseInt(puissance),
             },
             {
                 where: { immat: immatriculation },
@@ -173,12 +181,12 @@ async function updateCar(req, res) {
         );
 
         res.json({
-            message: "Voiture mise à jour !",
-            data: car,
+            message: `La voiture immatriculée ${immatriculation} a bien été modifiée`,
+            data: updatedCar,
         });
     } catch (error) {
-        res.status(500).json("Database Error");
-        console.log(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour" });
+        console.error("Erreur lors de la mise à jour : ", error);
     }
 }
 
