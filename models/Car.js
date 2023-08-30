@@ -7,7 +7,7 @@ export default (sequelize) => {
     Car.init(
         {
             immat: {
-                type: DataTypes.STRING(9),
+                type: DataTypes.STRING(11),
                 allowNull: false,
                 unique: true,
                 primaryKey: true,

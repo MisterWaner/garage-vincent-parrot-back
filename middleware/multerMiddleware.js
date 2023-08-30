@@ -1,13 +1,12 @@
 import multer from "multer";
 
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/cars');
+        cb(null, "uploads/cars");
     },
     filename: (req, file, cb) => {
-        const {brand, model } = req.body;
-        const fileExtenstion = file.originalname.split('.').pop();
+        const { brand, model } = req.body;
+        const fileExtenstion = file.originalname.split(".").pop();
         const fileName = `${brand}-${model}-${Date.now()}.${fileExtenstion}`;
         cb(null, fileName);
     },

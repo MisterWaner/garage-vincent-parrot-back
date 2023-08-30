@@ -17,11 +17,8 @@ async function addCar(req, res) {
             motor,
             color,
             puissance,
-            image,
         } = req.body;
 
-        console.log(req.file);
-        console.log(req.body);
         if (
             !immat ||
             !brand ||
@@ -31,23 +28,26 @@ async function addCar(req, res) {
             !price ||
             !motor ||
             !color ||
-            !puissance ||
-            !image
+            !puissance
         ) {
-            return res.send("Des données sont manquantes !");
+            return res.status(400).json({ message: "Paramètre manquant" });
         }
+
+        //Generate image url
+        const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
 
         //Check if car is not already in DB
         let car = await db.Car.findOne({
             where: { immat: immat },
             raw: true,
         });
+
         if (car) {
             return res
                 .status(409)
                 .send(`La voiture immatriculée ${immat} est déjà répertoriée`);
         }
-        const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
+
         //Generate reference
         const reference = generateCarRefence(brand, model);
         //Add car
@@ -55,13 +55,13 @@ async function addCar(req, res) {
             immat: immat,
             brand: brand,
             model: model,
-            year: year,
+            year: parseInt(year),
             reference: reference,
-            kilometers: kilometers,
-            price: price,
+            kilometers: parseInt(kilometers),
+            price: parseInt(price),
             motor: motor,
             color: color,
-            puissance: puissance,
+            puissance: parseInt(puissance),
             image: imageUrl,
         });
 
@@ -70,7 +70,7 @@ async function addCar(req, res) {
             data: car,
         });
     } catch (error) {
-        console.log(error);
+        console.error("Erreur d'ajout de la voiture : ", error);
         res.status(500).json({ message: "Erreur lors de la création" });
     }
 }
@@ -109,7 +109,7 @@ async function getAllCars(req, res) {
         res.status(200).json(cars);
     } catch (error) {
         res.status(500).json("Database Error");
-        console.log(error);
+        console.error(error);
     }
 }
 
