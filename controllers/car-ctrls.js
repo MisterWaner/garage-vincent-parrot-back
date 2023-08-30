@@ -37,7 +37,7 @@ async function addCar(req, res) {
         const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
 
         //Check if car is not already in DB
-        let car = await db.Car.findOne({
+        const car = await db.Car.findOne({
             where: { immat: immat },
             raw: true,
         });
@@ -51,7 +51,7 @@ async function addCar(req, res) {
         //Generate reference
         const reference = generateCarRefence(brand, model);
         //Add car
-        car = await db.Car.create({
+        const newCar = await db.Car.create({
             immat: immat,
             brand: brand,
             model: model,
@@ -67,7 +67,7 @@ async function addCar(req, res) {
 
         return res.status(200).json({
             message: `La voiture immatriculée ${immat} a bien été ajoutée`,
-            data: car,
+            data: newCar,
         });
     } catch (error) {
         console.error("Erreur d'ajout de la voiture : ", error);
