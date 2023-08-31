@@ -53,7 +53,7 @@ async function createAdmin(req, res) {
         //Admin creation
         admin = await db.Admin.create({
             adminId: admin.id,
-        })
+        });
 
         return res.status(201).json({
             message: "Admin créé",
@@ -104,11 +104,11 @@ async function createEmployee(req, res) {
             services: services,
             roleId: roleId,
         });
-
-        employee = await db.Employee.create({
-            userId: employee.id
-        })
-
+        
+        const newEmployee = await db.Employee.create({
+            userId: employee.id,
+        });
+        console.log(newEmployee);
         return res.status(201).json({
             message: "Utilisateur créé",
             data: employee,
