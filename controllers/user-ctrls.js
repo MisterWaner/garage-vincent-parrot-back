@@ -65,7 +65,7 @@ async function createAdmin(req, res) {
     }
 }
 
-//Creation of employee
+/******************************* CREATION EMPLOYEES ***********************************/
 async function createEmployee(req, res) {
     try {
         const { lastname, firstname, services } = req.body;
@@ -104,7 +104,7 @@ async function createEmployee(req, res) {
             services: services,
             roleId: roleId,
         });
-        
+
         const newEmployee = await db.Employee.create({
             userId: employee.id,
         });
@@ -157,11 +157,11 @@ async function getUser(req, res) {
     }
 }
 
-//Update User
-async function updateUser(req, res) {
+/*********************** UDATE USER EMPLOYEE *********************************/
+async function updateUserEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
-        let { firstname, lastname, email, password, confirmation } = req.body;
+        let { firstname, lastname, services, email } = req.body;
 
         //Check if id is ok
         if (!id) {
@@ -169,45 +169,40 @@ async function updateUser(req, res) {
         }
 
         //retrieve the user
-        let user = await db.User.findOne(req.body, {
+        let updatedUserEmployee = await db.User.findOne(req.body, {
             where: { id: id },
             raw: true,
         });
-        if (!user) {
+        if (!updatedUserEmployee) {
             res.status(404).json({
                 message: "L'utilisateur recherché n'existe pas",
             });
         }
 
-        if (password !== confirmation) {
-            return res.status(400).json({
-                message: "Les mots de passes doivent être identiques",
-            });
+        if (!firstname || !lastname || !services) {
+            return res.send("Des données sont manquantes");
         }
-        //Hash password
-        const hashedPassword = await bcrypt.hash(
-            password,
-            parseInt(process.env.BCRYPT_SALT_ROUND)
-        );
-        confirmation = hashedPassword;
 
         //update
-        user = await db.User.update(
+        updatedUserEmployee = await db.User.update(
             {
-                email: email,
                 firstname: firstname,
                 lastname: lastname,
-                password: hashedPassword,
-                confirmation: confirmation,
+                services: services,
+                email: generateEmail(firstname, lastname),
             },
             {
                 where: { id: id },
+                returning: true,
             }
         );
+        console.log(updatedUserEmployee);
 
+        const updatedEmployee = await db.User.findByPk(id)
+        console.log(updatedEmployee);
         res.json({
             message: "Utilisateur à jour !",
-            data: user,
+            data: updatedEmployee,
         });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
@@ -249,6 +244,6 @@ export {
     createEmployee,
     getAllUsers,
     getUser,
-    updateUser,
+    updateUserEmployee,
     deleteUser,
 };

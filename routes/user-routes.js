@@ -5,7 +5,7 @@ import {
     createAdmin,
     getAllUsers,
     getUser,
-    updateUser,
+    updateUserEmployee,
     deleteUser,
 } from "../controllers/user-ctrls.js";
 
@@ -15,7 +15,7 @@ userRouter.post("/admins", createAdmin);
 userRouter.post("/employees", createEmployee);
 userRouter.get("/", getAllUsers);
 userRouter.get("/:id", getUser);
-userRouter.put("/:id", updateUser);
+userRouter.put("/:id", updateUserEmployee);
 userRouter.delete("/:id", deleteUser);
 
 export default userRouter;
