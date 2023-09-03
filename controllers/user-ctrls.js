@@ -161,7 +161,8 @@ async function getUser(req, res) {
 async function updateUserEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
-        let { firstname, lastname, services, email } = req.body;
+        const { firstname, lastname, services} = req.body;
+        
 
         //Check if id is ok
         if (!id) {
@@ -170,7 +171,7 @@ async function updateUserEmployee(req, res) {
 
         //retrieve the user
         let updatedUserEmployee = await db.User.findOne(req.body, {
-            where: { id: id },
+            where: { id: id, roleId: 2 },
             raw: true,
         });
         if (!updatedUserEmployee) {
@@ -178,35 +179,34 @@ async function updateUserEmployee(req, res) {
                 message: "L'utilisateur recherché n'existe pas",
             });
         }
-
+        console.log(updatedUserEmployee);
         if (!firstname || !lastname || !services) {
             return res.send("Des données sont manquantes");
         }
 
+        const email = generateEmail(firstname, lastname);
         //update
         updatedUserEmployee = await db.User.update(
             {
+                ...updatedUserEmployee,
                 firstname: firstname,
                 lastname: lastname,
                 services: services,
-                email: generateEmail(firstname, lastname),
+                email: email,
             },
             {
                 where: { id: id },
-                returning: true,
             }
         );
-        console.log(updatedUserEmployee);
+        console.log("utilisateur mis a jour ",updatedUserEmployee);
 
-        const updatedEmployee = await db.User.findByPk(id)
-        console.log(updatedEmployee);
-        res.json({
+        return res.json({
             message: "Utilisateur à jour !",
-            data: updatedEmployee,
+            data: {updatedUserEmployee, email: email},
         });
     } catch (error) {
-        res.status(500).json({ message: "Database Error" });
-        console.log(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour" });
+        console.log("Erreur lors de la mise à jour : ", error);
     }
 }
 
