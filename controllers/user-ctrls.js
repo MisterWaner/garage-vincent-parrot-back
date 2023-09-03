@@ -11,11 +11,11 @@ config();
 //Creation of an admin
 async function createAdmin(req, res) {
     try {
-        const { email, password, confirmation } = req.body;
+        let { firstname, lastname, password, confirmation } = req.body;
         const roleId = 1;
 
         //Check if datas are valid
-        if (!email || !password || !confirmation) {
+        if (!firstname || !lastname || !password || !confirmation) {
             return res.send("Des données sont manquantes");
         }
         if (password !== confirmation) {
@@ -25,7 +25,7 @@ async function createAdmin(req, res) {
         }
         //Check if admin already exist
         let admin = await db.User.findOne({
-            where: { email: email },
+            where: { email: generateEmail(firstname, lastname) },
             raw: true,
         });
         if (admin) {
@@ -44,17 +44,22 @@ async function createAdmin(req, res) {
 
         //User creation
         admin = await db.User.create({
-            email: email,
+            email: generateEmail(firstname, lastname),
+            firstname: firstname,
+            lastname: lastname,
             password: password,
             confirmation: confirmation,
             roleId: roleId,
+            services: "Direction",
+            isAdmin: true,
         });
 
         //Admin creation
         admin = await db.Admin.create({
-            adminId: admin.id,
+            userId: admin.id,
         });
 
+        console.log(admin);
         return res.status(201).json({
             message: "Admin créé",
             data: admin,

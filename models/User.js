@@ -38,15 +38,19 @@ export default (sequelize) => {
             },
             firstname: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                allowNull: false,
             },
             lastname: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                allowNull: false,
             },
             services: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                allowNull: false,
+            },
+            isAdmin: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             }
         },
         {
