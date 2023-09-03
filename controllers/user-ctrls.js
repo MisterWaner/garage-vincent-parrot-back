@@ -211,7 +211,7 @@ async function updateUserEmployee(req, res) {
 }
 
 //Delete User
-async function deleteUser(req, res) {
+async function deleteUserEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
         //Check if id is OK
@@ -220,11 +220,11 @@ async function deleteUser(req, res) {
         }
 
         //deletation of user
-        const user = await db.User.destroy({
-            where: { id: id },
+        const employee = await db.User.destroy({
+            where: { id: id, roleId: 2 },
             force: true,
         });
-        if (!user) {
+        if (!employee) {
             return res
                 .status(404)
                 .json({ message: "L'utilisateur recherché n'existe pas" });
@@ -245,5 +245,5 @@ export {
     getAllUsers,
     getUser,
     updateUserEmployee,
-    deleteUser,
+    deleteUserEmployee,
 };

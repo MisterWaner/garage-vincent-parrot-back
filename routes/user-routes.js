@@ -6,7 +6,7 @@ import {
     getAllUsers,
     getUser,
     updateUserEmployee,
-    deleteUser,
+    deleteUserEmployee,
 } from "../controllers/user-ctrls.js";
 
 const userRouter = Router();
@@ -15,7 +15,7 @@ userRouter.post("/admins", createAdmin);
 userRouter.post("/employees", createEmployee);
 userRouter.get("/", getAllUsers);
 userRouter.get("/:id", getUser);
-userRouter.put("/:id", updateUserEmployee);
-userRouter.delete("/:id", deleteUser);
+userRouter.put("/employees/:id", updateUserEmployee);
+userRouter.delete("/employees/:id", deleteUserEmployee);
 
 export default userRouter;
