@@ -8,7 +8,7 @@ config();
 
 /************ Controllers  *************/
 
-//Creation of an admin
+/********************* CREATION ADMIN ***********************************/
 async function createAdmin(req, res) {
     try {
         let { firstname, lastname, password, confirmation } = req.body;
@@ -39,27 +39,24 @@ async function createAdmin(req, res) {
             password,
             parseInt(process.env.BCRYPT_SALT_ROUND)
         );
-        password = hashedPassword;
-        confirmation = hashedPassword;
 
         //User creation
         admin = await db.User.create({
             email: generateEmail(firstname, lastname),
             firstname: firstname,
             lastname: lastname,
-            password: password,
-            confirmation: confirmation,
+            password: hashedPassword,
             roleId: roleId,
             services: "Direction",
             isAdmin: true,
         });
 
         //Admin creation
-        admin = await db.Admin.create({
+        const newAdmin = await db.Admin.create({
             userId: admin.id,
         });
 
-        console.log(admin);
+        console.log(newAdmin);
         return res.status(201).json({
             message: "Admin créé",
             data: admin,
@@ -125,7 +122,7 @@ async function createEmployee(req, res) {
     }
 }
 
-//getAll User
+/********************* GET ALL USERS ***********************************/
 async function getAllUsers(req, res) {
     try {
         const users = await db.User.findAll();
@@ -136,7 +133,7 @@ async function getAllUsers(req, res) {
     }
 }
 
-//getOne User
+/********************* GET ONE USER ***********************************/
 async function getUser(req, res) {
     try {
         const id = parseInt(req.params.id);
@@ -166,8 +163,7 @@ async function getUser(req, res) {
 async function updateUserEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
-        const { firstname, lastname, services} = req.body;
-        
+        const { firstname, lastname, services } = req.body;
 
         //Check if id is ok
         if (!id) {
@@ -189,6 +185,7 @@ async function updateUserEmployee(req, res) {
             return res.send("Des données sont manquantes");
         }
 
+        //generate email
         const email = generateEmail(firstname, lastname);
         //update
         updatedUserEmployee = await db.User.update(
@@ -200,14 +197,14 @@ async function updateUserEmployee(req, res) {
                 email: email,
             },
             {
-                where: { id: id },
+                where: { id: id, roleId: 2 },
             }
         );
-        console.log("utilisateur mis a jour ",updatedUserEmployee);
+        console.log("utilisateur mis a jour ", updatedUserEmployee);
 
         return res.json({
             message: "Utilisateur à jour !",
-            data: {updatedUserEmployee, email: email},
+            data: { updatedUserEmployee, email: email },
         });
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de la mise à jour" });
@@ -215,7 +212,74 @@ async function updateUserEmployee(req, res) {
     }
 }
 
-//Delete User
+/************************ UPDATE USER ADMIN ************************************/
+async function updateUserAdmin(req, res) {
+    try {
+        const id = parseInt(req.params.id);
+        let { firstname, lastname, password, confirmation } = req.body;
+
+        //Check if id is ok
+        if (!id) {
+            return res.status(400).json({ message: "Paramètre manquant" });
+        }
+        //retrieve the user
+        let updatedUserAdmin = await db.User.findByPk(id);
+        console.log(updatedUserAdmin);
+        if (!updatedUserAdmin) {
+            return res.status(404).json({
+                message: "L'utilisateur recherché n'existe pas",
+            });
+        }
+        console.log(updatedUserAdmin);
+
+        //Check if datas are valid
+        if (!firstname || !lastname || !password || !confirmation) {
+            return res.send("Des données sont manquantes");
+        }
+
+        //Check if password and confirmation are ok
+        if (password !== confirmation) {
+            return res.status(400).json({
+                message: "Les mots de passes doivent être identiques",
+            });
+        }
+
+        //Hash password
+        const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.BCRYPT_SALT_ROUND)
+        );
+    
+        //generate email
+        const email = generateEmail(firstname, lastname);
+
+        //update
+        updatedUserAdmin = await db.User.update(
+            {
+                ...updatedUserAdmin,
+                firstname: firstname,
+                lastname: lastname,
+                password: hashedPassword,
+                email: email,
+            },
+            {
+                where: { id: id, roleId: 1 },
+            }
+        );
+        console.log("utilisateur mis a jour ", updatedUserAdmin);
+
+        res.json({
+            message: "Utilisateur à jour !",
+            data: updatedUserAdmin,
+            email: email,
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur lors de la mise à jour" });
+        console.log("Erreur lors de la mise à jour : ", error);
+    }
+}
+
+/************************ DELETE USER EMPLOYEE *********************************/
 async function deleteUserEmployee(req, res) {
     try {
         const id = parseInt(req.params.id);
@@ -244,6 +308,32 @@ async function deleteUserEmployee(req, res) {
     }
 }
 
+/************************* DELETE USER ADMIN *********************************/
+async function deleteUserAdmin(req, res) {
+    try {
+        const id = parseInt(req.params.id);
+        //Check if id is OK
+        if (!id) {
+            return res.status(400).json({ message: "Paramètre manquant" });
+        }
+        const admin = await db.User.destroy({
+            where: { id: id, roleId: 1 },
+            force: true,
+        });
+        if (!admin) {
+            return res
+                .status(404)
+                .json({ message: "L'utilisateur recherché n'existe pas" });
+        }
+        res.status(200).json({
+            message: "Cet utilisateur a été supprimé avec succès",
+        })
+    } catch (error) {
+        res.status(500).json({ message: "Database Error" });
+        console.log(error);
+    }
+}
+
 export {
     createAdmin,
     createEmployee,
@@ -251,4 +341,6 @@ export {
     getUser,
     updateUserEmployee,
     deleteUserEmployee,
+    updateUserAdmin,
+    deleteUserAdmin,
 };
