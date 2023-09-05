@@ -8,114 +8,76 @@ config();
 
 /************ Controllers  *************/
 
-/********************* CREATION ADMIN ***********************************/
-async function createAdmin(req, res) {
+/********************* CREATION USER ***********************************/
+async function createUser(req, res) {
     try {
-        let { firstname, lastname, password, confirmation } = req.body;
-        const roleId = 1;
+        let { firstname, lastname, services, isAdmin } = req.body;
 
         //Check if datas are valid
-        if (!firstname || !lastname || !password || !confirmation) {
+        if (!firstname || !lastname || !services) {
             return res.send("Des données sont manquantes");
         }
-        if (password !== confirmation) {
-            return res.status(400).json({
-                message: "Les mots de passes doivent être identiques",
-            });
-        }
-        //Check if admin already exist
-        let admin = await db.User.findOne({
+        //Check if user already exist
+        let user = await db.User.findOne({
             where: { email: generateEmail(firstname, lastname) },
             raw: true,
         });
-        if (admin) {
-            return res
-                .status(409)
-                .json({ message: "Utilisateur déjà existant" });
-        }
-
-        //Hash password
-        const hashedPassword = await bcrypt.hash(
-            password,
-            parseInt(process.env.BCRYPT_SALT_ROUND)
-        );
-
-        //User creation
-        admin = await db.User.create({
-            email: generateEmail(firstname, lastname),
-            firstname: firstname,
-            lastname: lastname,
-            password: hashedPassword,
-            roleId: roleId,
-            services: "Direction",
-            isAdmin: true,
-        });
-
-        //Admin creation
-        const newAdmin = await db.Admin.create({
-            userId: admin.id,
-        });
-
-        console.log(newAdmin);
-        return res.status(201).json({
-            message: "Admin créé",
-            data: admin,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Erreur lors de la création" });
-    }
-}
-
-/******************************* CREATION EMPLOYEES ***********************************/
-async function createEmployee(req, res) {
-    try {
-        const { lastname, firstname, services } = req.body;
-        let password;
-        const roleId = 2;
-
-        //Check if datas are valid
-        if (!lastname || !firstname || !services) {
-            return res.send("Des données sont manquantes");
-        }
-        //Check if employee already exist
-        let employee = await db.User.findOne({
-            where: { email: generateEmail(firstname, lastname) },
-            raw: true,
-        });
-        if (employee) {
+        if (user) {
             return res
                 .status(409)
                 .json({ message: "Utilisateur déjà existant" });
         }
 
         //generate password
-        password = generateTemporaryPassword(64);
+        const password = generateTemporaryPassword(64);
         //Hash password
         const hashedPassword = await bcrypt.hash(
             password,
             parseInt(process.env.BCRYPT_SALT_ROUND)
         );
 
-        //create employee
-        employee = await db.User.create({
+        let roleId;
+        //Check if admin
+        if (isAdmin === true) {
+            roleId = 1;
+        } else if (isAdmin === false) {
+            roleId = 2;
+        }
+
+        //User creation
+        user = await db.User.create({
             email: generateEmail(firstname, lastname),
-            lastname: lastname,
             firstname: firstname,
+            lastname: lastname,
             password: hashedPassword,
-            services: services,
             roleId: roleId,
+            services: services,
+            isAdmin: isAdmin,
         });
 
-        const newEmployee = await db.Employee.create({
-            userId: employee.id,
-        });
-        console.log(newEmployee);
+        let newUserData;
+
+        switch (roleId) {
+            case 1:
+                newUserData = await db.Admin.create({
+                    userId: user.id,
+                });
+                break;
+            case 2:
+                newUserData = await db.Employee.create({
+                    userId: user.id,
+                });
+                break;
+            default:
+                return res.status(500).json({ message: "Rôle non valide" });
+        }
+
+        console.log(newUserData);
         return res.status(201).json({
             message: "Utilisateur créé",
-            data: employee,
+            data: user, newUserData,
             password: password,
-        });
+        })
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Erreur lors de la création" });
@@ -249,7 +211,7 @@ async function updateUserAdmin(req, res) {
             password,
             parseInt(process.env.BCRYPT_SALT_ROUND)
         );
-    
+
         //generate email
         const email = generateEmail(firstname, lastname);
 
@@ -327,7 +289,7 @@ async function deleteUserAdmin(req, res) {
         }
         res.status(200).json({
             message: "Cet utilisateur a été supprimé avec succès",
-        })
+        });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
         console.log(error);
@@ -335,8 +297,7 @@ async function deleteUserAdmin(req, res) {
 }
 
 export {
-    createAdmin,
-    createEmployee,
+    createUser,
     getAllUsers,
     getUser,
     updateUserEmployee,
