@@ -1,12 +1,12 @@
 //Import modules
 import { DataTypes, Model } from "sequelize";
-import Employee from "./Employee.js";
+import User from "./User.js";
 import Review from "./Review.js";
 
 export default (sequelize) => {
-    class Employee_Review extends Model {}
+    class User_Review extends Model {}
 
-    Employee_Review.init(
+    User_Review.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -14,10 +14,10 @@ export default (sequelize) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            employeeId: {
+            userId: {
                 type: DataTypes.INTEGER,
                 references: {
-                    model: Employee,
+                    model: User,
                     key: "id",
                 },
             },
@@ -37,5 +37,5 @@ export default (sequelize) => {
         }
     );
 
-    return Employee_Review;
+    return User_Review;
 };

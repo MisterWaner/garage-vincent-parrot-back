@@ -48,15 +48,12 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 /************************* Routes ************************/
 
 //Import Routers
-import adminRouter from "./routes/admin-routes.js";
-import employeeRouter from "./routes/employee-routes.js";
 import carRouter from "./routes/car-routes.js";
 import dayRouter from "./routes/day-routes.js";
 import slotRouter from "./routes/slot-routes.js";
 import imageRouter from "./routes/image-routes.js";
 import reviewRouter from "./routes/review-routes.js";
 import serviceRouter from "./routes/service-routes.js";
-import roleRouter from "./routes/role-routes.js";
 import userRouter from "./routes/user-routes.js";
 
 
@@ -65,15 +62,12 @@ app.get("/api", (req, res) => {
 });
 
 //Routes
-app.use("/api/users/admins", adminRouter);
-app.use("/api/users/employees", employeeRouter);
 app.use("/api/cars", carRouter);
 app.use("/api/days", dayRouter);
 app.use("/api/slots", slotRouter);
 app.use("/api/images", imageRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/services", serviceRouter);
-app.use("/api/roles", roleRouter);
 app.use("/api/users", userRouter);
 
 /*************************** Start Server *************************/

@@ -8,13 +8,13 @@ config();
 
 /************ Controllers  *************/
 
-/********************* CREATION USER ***********************************/
+/********************* CREATION EMPLOYEE ***********************************/
 async function createUser(req, res) {
     try {
-        let { firstname, lastname, services, isAdmin } = req.body;
+        let { firstname, lastname, services, role } = req.body;
 
         //Check if datas are valid
-        if (!firstname || !lastname || !services) {
+        if (!firstname || !lastname || !services || !role) {
             return res.send("Des données sont manquantes");
         }
         //Check if user already exist
@@ -36,46 +36,20 @@ async function createUser(req, res) {
             parseInt(process.env.BCRYPT_SALT_ROUND)
         );
 
-        let roleId;
-        //Check if admin
-        if (isAdmin === true) {
-            roleId = 1;
-        } else if (isAdmin === false) {
-            roleId = 2;
-        }
-
         //User creation
         user = await db.User.create({
             email: generateEmail(firstname, lastname),
             firstname: firstname,
             lastname: lastname,
             password: hashedPassword,
-            roleId: roleId,
+            role: role,
             services: services,
-            isAdmin: isAdmin,
         });
 
-        let newUserData;
-
-        switch (roleId) {
-            case 1:
-                newUserData = await db.Admin.create({
-                    userId: user.id,
-                });
-                break;
-            case 2:
-                newUserData = await db.Employee.create({
-                    userId: user.id,
-                });
-                break;
-            default:
-                return res.status(500).json({ message: "Rôle non valide" });
-        }
-
-        console.log(newUserData);
+        console.log(user);
         return res.status(201).json({
             message: "Utilisateur créé",
-            data: user, newUserData,
+            data: user,
             password: password,
         })
     } catch (error) {
@@ -121,11 +95,11 @@ async function getUser(req, res) {
     }
 }
 
-/*********************** UDATE USER EMPLOYEE *********************************/
-async function updateUserEmployee(req, res) {
+/*********************** UPDATE USER *********************************/
+async function updateUser(req, res) {
     try {
         const id = parseInt(req.params.id);
-        const { firstname, lastname, services } = req.body;
+        let { firstname, lastname, services } = req.body;
 
         //Check if id is ok
         if (!id) {
@@ -133,16 +107,16 @@ async function updateUserEmployee(req, res) {
         }
 
         //retrieve the user
-        let updatedUserEmployee = await db.User.findOne(req.body, {
-            where: { id: id, roleId: 2 },
+        let updatedUser= await db.User.findOne(req.body, {
+            where: { id: id },
             raw: true,
         });
-        if (!updatedUserEmployee) {
+        if (!updatedUser) {
             res.status(404).json({
                 message: "L'utilisateur recherché n'existe pas",
             });
         }
-        console.log(updatedUserEmployee);
+        console.log(updatedUser);
         if (!firstname || !lastname || !services) {
             return res.send("Des données sont manquantes");
         }
@@ -150,23 +124,23 @@ async function updateUserEmployee(req, res) {
         //generate email
         const email = generateEmail(firstname, lastname);
         //update
-        updatedUserEmployee = await db.User.update(
+        updatedUser = await db.User.update(
             {
-                ...updatedUserEmployee,
+                ...updatedUser,
                 firstname: firstname,
                 lastname: lastname,
                 services: services,
                 email: email,
             },
             {
-                where: { id: id, roleId: 2 },
+                where: { id: id},
             }
         );
-        console.log("utilisateur mis a jour ", updatedUserEmployee);
+        console.log("utilisateur mis a jour ", updatedUser);
 
         return res.json({
             message: "Utilisateur à jour !",
-            data: { updatedUserEmployee, email: email },
+            data: { updatedUser, email: email },
         });
     } catch (error) {
         res.status(500).json({ message: "Erreur lors de la mise à jour" });
@@ -174,75 +148,8 @@ async function updateUserEmployee(req, res) {
     }
 }
 
-/************************ UPDATE USER ADMIN ************************************/
-async function updateUserAdmin(req, res) {
-    try {
-        const id = parseInt(req.params.id);
-        let { firstname, lastname, password, confirmation } = req.body;
-
-        //Check if id is ok
-        if (!id) {
-            return res.status(400).json({ message: "Paramètre manquant" });
-        }
-        //retrieve the user
-        let updatedUserAdmin = await db.User.findByPk(id);
-        console.log(updatedUserAdmin);
-        if (!updatedUserAdmin) {
-            return res.status(404).json({
-                message: "L'utilisateur recherché n'existe pas",
-            });
-        }
-        console.log(updatedUserAdmin);
-
-        //Check if datas are valid
-        if (!firstname || !lastname || !password || !confirmation) {
-            return res.send("Des données sont manquantes");
-        }
-
-        //Check if password and confirmation are ok
-        if (password !== confirmation) {
-            return res.status(400).json({
-                message: "Les mots de passes doivent être identiques",
-            });
-        }
-
-        //Hash password
-        const hashedPassword = await bcrypt.hash(
-            password,
-            parseInt(process.env.BCRYPT_SALT_ROUND)
-        );
-
-        //generate email
-        const email = generateEmail(firstname, lastname);
-
-        //update
-        updatedUserAdmin = await db.User.update(
-            {
-                ...updatedUserAdmin,
-                firstname: firstname,
-                lastname: lastname,
-                password: hashedPassword,
-                email: email,
-            },
-            {
-                where: { id: id, roleId: 1 },
-            }
-        );
-        console.log("utilisateur mis a jour ", updatedUserAdmin);
-
-        res.json({
-            message: "Utilisateur à jour !",
-            data: updatedUserAdmin,
-            email: email,
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Erreur lors de la mise à jour" });
-        console.log("Erreur lors de la mise à jour : ", error);
-    }
-}
-
-/************************ DELETE USER EMPLOYEE *********************************/
-async function deleteUserEmployee(req, res) {
+/************************ DELETE USER *********************************/
+async function deleteUser(req, res) {
     try {
         const id = parseInt(req.params.id);
         //Check if id is OK
@@ -251,11 +158,11 @@ async function deleteUserEmployee(req, res) {
         }
 
         //deletation of user
-        const employee = await db.User.destroy({
-            where: { id: id, roleId: 2 },
+        const user = await db.User.destroy({
+            where: { id: id },
             force: true,
         });
-        if (!employee) {
+        if (!user) {
             return res
                 .status(404)
                 .json({ message: "L'utilisateur recherché n'existe pas" });
@@ -270,38 +177,12 @@ async function deleteUserEmployee(req, res) {
     }
 }
 
-/************************* DELETE USER ADMIN *********************************/
-async function deleteUserAdmin(req, res) {
-    try {
-        const id = parseInt(req.params.id);
-        //Check if id is OK
-        if (!id) {
-            return res.status(400).json({ message: "Paramètre manquant" });
-        }
-        const admin = await db.User.destroy({
-            where: { id: id, roleId: 1 },
-            force: true,
-        });
-        if (!admin) {
-            return res
-                .status(404)
-                .json({ message: "L'utilisateur recherché n'existe pas" });
-        }
-        res.status(200).json({
-            message: "Cet utilisateur a été supprimé avec succès",
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Database Error" });
-        console.log(error);
-    }
-}
 
 export {
     createUser,
     getAllUsers,
     getUser,
-    updateUserEmployee,
-    deleteUserEmployee,
-    updateUserAdmin,
-    deleteUserAdmin,
+    updateUser,
+    deleteUser,
+  
 };

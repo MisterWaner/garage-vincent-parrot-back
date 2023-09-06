@@ -39,10 +39,10 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            isAdmin: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: false
-            }
+            role: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
         },
         {
             modelName: "user",
