@@ -13,7 +13,6 @@ import Review from "../models/Review.js";
 import Service from "../models/Service.js";
 import Slot from "../models/Slot.js";
 import User from "../models/User.js";
-import User_Review from "../models/User_Review.js";
 
 //Create connexion between DB and sequelize
 const sequelize = new Sequelize(
@@ -37,7 +36,6 @@ db.User = User(sequelize);
 db.Day = Day(sequelize);
 db.Car = Car(sequelize);
 db.Image = Image(sequelize);
-db.User_Review = User_Review(sequelize);
 db.Review = Review(sequelize);
 db.Service = Service(sequelize);
 db.Slot = Slot(sequelize);
@@ -69,22 +67,6 @@ Slot.Day = db.Slot.hasMany(db.Day, {
 //One day has one slot
 Day.Slot = db.Day.belongsTo(db.Slot);
 
-User.Review = db.User.belongsToMany(db.Review, {
-    foreignKey: {
-        name: "userId",
-        allowNull: false,
-    },
-    sourceKey: "id",
-    through: db.User_Review,
-});
-Review.User = db.Review.belongsToMany(db.User, {
-    foreignKey: {
-        name: "reviewId",
-        allowNull: false,
-    },
-    sourceKey: "id",
-    through: db.User_Review,
-});
 
 db.sequelize.sync({});
 
