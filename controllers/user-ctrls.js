@@ -11,14 +11,14 @@ config();
 /********************* CREATION EMPLOYEE ***********************************/
 async function createUser(req, res) {
     try {
-        let { firstname, lastname, services, role } = req.body;
+        const { firstname, lastname, services, role } = req.body;
 
         //Check if datas are valid
         if (!firstname || !lastname || !services || !role) {
             return res.send("Des données sont manquantes");
         }
         //Check if user already exist
-        let user = await db.User.findOne({
+        const user = await db.User.findOne({
             where: { email: generateEmail(firstname, lastname) },
             raw: true,
         });
@@ -37,7 +37,7 @@ async function createUser(req, res) {
         );
 
         //User creation
-        user = await db.User.create({
+        const newUser = await db.User.create({
             email: generateEmail(firstname, lastname),
             firstname: firstname,
             lastname: lastname,
@@ -46,10 +46,10 @@ async function createUser(req, res) {
             services: services,
         });
 
-        console.log(user);
-        return res.status(201).json({
+        console.log(newUser);
+        return res.status(200).json({
             message: "Utilisateur créé",
-            data: user,
+            data: newUser,
             password: password,
         })
     } catch (error) {
@@ -99,7 +99,7 @@ async function getUser(req, res) {
 async function updateUser(req, res) {
     try {
         const id = parseInt(req.params.id);
-        let { firstname, lastname, services } = req.body;
+        let { firstname, lastname, services, role } = req.body;
 
         //Check if id is ok
         if (!id) {
@@ -117,7 +117,7 @@ async function updateUser(req, res) {
             });
         }
         console.log(updatedUser);
-        if (!firstname || !lastname || !services) {
+        if (!firstname || !lastname || !services || !role) {
             return res.send("Des données sont manquantes");
         }
 
@@ -131,6 +131,7 @@ async function updateUser(req, res) {
                 lastname: lastname,
                 services: services,
                 email: email,
+                role: role,
             },
             {
                 where: { id: id},
