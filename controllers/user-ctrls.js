@@ -4,8 +4,6 @@ import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import generateTemporaryPassword from "../functions/generateTemporaryPassword.js";
 import generateEmail from "../functions/generateEmail.js";
-import generateToken from "../functions/generateToken.js";
-import authenticate from "../functions/authenticate.js";
 config();
 
 /************ Controllers  *************/
@@ -180,29 +178,4 @@ async function deleteUser(req, res) {
     }
 }
 
-const login = async (req, res) => {
-    const { email, password } = req.body;
-    const user = await authenticate(email, password);
-
-    if (!user) {
-        return res
-            .status(401)
-            .json({ message: "Utilisateur ou mot de passe incorrect" });
-    } else {
-        const token = generateToken(user);
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-            maxAge: 60 * 60 * 24,
-        });
-        res.status(200).json({
-            token,
-            role: user.role,
-            id: user.id,
-            message: "Connexion reussie",
-        });
-    }
-};
-
-export { createUser, getAllUsers, getUser, updateUser, deleteUser, login };
+export { createUser, getAllUsers, getUser, updateUser, deleteUser };
