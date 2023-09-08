@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import generateTemporaryPassword from "../functions/generateTemporaryPassword.js";
 import generateEmail from "../functions/generateEmail.js";
+import generateToken from "../functions/generateToken.js";
+import authenticate from "../functions/authenticate.js";
 config();
 
 /************ Controllers  *************/
@@ -51,7 +53,7 @@ async function createUser(req, res) {
             message: "Utilisateur créé",
             data: newUser,
             password: password,
-        })
+        });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Erreur lors de la création" });
@@ -107,7 +109,7 @@ async function updateUser(req, res) {
         }
 
         //retrieve the user
-        let updatedUser= await db.User.findOne(req.body, {
+        let updatedUser = await db.User.findOne(req.body, {
             where: { id: id },
             raw: true,
         });
@@ -134,7 +136,7 @@ async function updateUser(req, res) {
                 role: role,
             },
             {
-                where: { id: id},
+                where: { id: id },
             }
         );
         console.log("utilisateur mis a jour ", updatedUser);
@@ -178,12 +180,29 @@ async function deleteUser(req, res) {
     }
 }
 
+const login = async (req, res) => {
+    const { email, password } = req.body;
+    const user = await authenticate(email, password);
 
-export {
-    createUser,
-    getAllUsers,
-    getUser,
-    updateUser,
-    deleteUser,
-  
+    if (!user) {
+        return res
+            .status(401)
+            .json({ message: "Utilisateur ou mot de passe incorrect" });
+    } else {
+        const token = generateToken(user);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 60 * 60 * 24,
+        });
+        res.status(200).json({
+            token,
+            role: user.role,
+            id: user.id,
+            message: "Connexion reussie",
+        });
+    }
 };
+
+export { createUser, getAllUsers, getUser, updateUser, deleteUser, login };
