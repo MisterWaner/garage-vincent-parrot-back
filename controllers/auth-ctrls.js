@@ -15,10 +15,10 @@ const login = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "None",
-            maxAge: 60*60,
+            maxAge: 3600000,
         });
         res.status(200).json({
-            token,
+            token: token,
             role: user.role,
             firstname: user.firstname,
             message: "Connexion reussie",
