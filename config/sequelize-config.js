@@ -13,6 +13,7 @@ import Review from "../models/Review.js";
 import Service from "../models/Service.js";
 import Slot from "../models/Slot.js";
 import User from "../models/User.js";
+import Mail from "../models/Mail.js";
 
 //Create connexion between DB and sequelize
 const sequelize = new Sequelize(
@@ -39,6 +40,7 @@ db.Image = Image(sequelize);
 db.Review = Review(sequelize);
 db.Service = Service(sequelize);
 db.Slot = Slot(sequelize);
+db.Mail = Mail(sequelize);
 
 //Relation
 

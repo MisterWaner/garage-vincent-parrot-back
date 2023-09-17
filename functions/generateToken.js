@@ -4,7 +4,7 @@ config();
 
 const generateToken = (user) => {
     //Set up the token
-    const maxAge = "1h";
+    const maxAge = 3600000;
     const jwtToken = jwt.sign(
         {
             id: user.id,
