@@ -28,12 +28,9 @@ export default (sequelize) => {
                 },
             },
             phone: {
-                type: DataTypes.STRING(10),
+                type: DataTypes.STRING,
                 allowNull: false,
-                validate: {
-                    isNumeric: true,
-                    len: [0, 10],
-                },
+                is: /^(0[1-9]-\d{2}-\d{2}-\d{2}-\d{2}|[1-9]-\d{2}-\d{2}-\d{2}-\d{2})$/, //constraint regex
             },
             date: {
                 type: DataTypes.DATEONLY,
@@ -51,7 +48,7 @@ export default (sequelize) => {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false,
-            }
+            },
         },
         {
             modelName: "mail",

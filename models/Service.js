@@ -23,11 +23,6 @@ export default (sequelize) => {
             phone: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                unique: true,
-                validate: {
-                    isNumeric: true,
-                    len: 10
-                }
             },
             email: {
                 type: DataTypes.STRING,
@@ -35,7 +30,6 @@ export default (sequelize) => {
                     isEmail: true, //data validation
                 },
                 allowNull: false,
-                unique: true, //unique email
             },
         },
         {
