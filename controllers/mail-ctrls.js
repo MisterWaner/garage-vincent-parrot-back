@@ -78,15 +78,6 @@ async function getAllMails(req, res) {
 /******************* GET ONE MAIL *****************/
 async function getOneMail(req, res) {
     try {
-        // const id = req.params.id;
-
-        // //Check if id is ok
-        // if (!id) {
-        //     return res.status(400).json({ message: "Paramètre manquant" });
-        // }
-
-        // console.log(id);
-        //Check if mail exist
         let mail = await db.Mail.findByPk(req.params.id);
         if (!mail) {
             res.status(404).json({
@@ -104,19 +95,10 @@ async function getOneMail(req, res) {
 /*************** UPDATE MAIL ********************/
 async function updateMail(req, res) {
     try {
-        const id = req.params.id;
         let { isRead } = req.body;
 
-        //Check if id is ok
-        if (!id) {
-            return res.status(400).json({ message: "Paramètre manquant" });
-        }
-
         //retrieve the mail
-        let updatedMail = await db.Mail.findOne({
-            where: { id: id },
-            raw: true,
-        });
+        let updatedMail = await db.Mail.findByPk(req.params.id);
         if (!updatedMail) {
             res.status(404).json({
                 message: "Le mail recherché n'existe pas",
@@ -164,7 +146,10 @@ async function deleteMail(req, res) {
                 .status(404)
                 .json({ message: "Le mail recherché n'existe pas" });
         }
-    } catch (error) {}
+    } catch (error) {
+        res.status(500).json({ message: "Database Error" });
+        console.log(error);
+    }
 }
 
 export { addMail, getAllMails, getOneMail, updateMail, deleteMail };

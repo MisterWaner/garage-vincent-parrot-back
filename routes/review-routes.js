@@ -10,7 +10,7 @@ import {
 
 const reviewRouter = Router();
 
-reviewRouter.post("/add", addReview);
+reviewRouter.post("/", addReview);
 reviewRouter.get("/", getAllReviews);
 reviewRouter.get("/:id", getReview);
 reviewRouter.put("/:id", updateReview);

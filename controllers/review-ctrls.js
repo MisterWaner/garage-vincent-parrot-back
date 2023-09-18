@@ -6,66 +6,58 @@ import db from "../config/sequelize-config.js";
 
 //Add review
 async function addReview(req, res) {
-    const { id, author, title, text, date } = req.body;
+    const { id, firstname, lastname, email, title, text, rating, isValidated } =
+        req.body;
 
     try {
-        if (!author || !title || !text || !date) {
+        if (!firstname || !lastname || !email || !title || !text || !rating) {
             return res.send("Des données sont manquantes !");
         }
 
         //Check if review exist already exist in DB.
-        let review = await db.Review.findOne({
-            where: { title: title, author: author },
-            raw: true,
-        });
+        const review = await db.Review.findByPk(id);
         if (review) {
             return res
                 .status(409)
                 .send(
-                    `Ce commentaire : ${title} écrit par ${author} est déjà répertoriée`
+                    `Ce commentaire : ${title} est déjà répertoriée (id: ${id})`
                 );
         }
 
+        //Generate date
+        const generatedDate = new Date();
+
         //Add review
-        review = await db.Review.create({
+        const newReview = await db.Review.create({
             id: id,
             title: title,
-            author: author,
+            lastname: lastname,
+            firstname: firstname,
+            email: email,
+            rating: rating,
+            isValidated: isValidated,
             text: text,
-            date: date,
+            date: generatedDate,
         });
 
-        return res.json({
-            message: `Le commentaire ${title} écrit par ${author} a bien été ajouté`,
-            data: review,
+        console.log(newReview);
+
+        return res.status(200).json({
+            message: `Le commentaire ${title} écrit par ${firstname} ${lastname} a bien été ajouté`,
+            data: newReview,
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: "Erreur lors de la création" });
+        return res
+            .status(500)
+            .json({ message: "Erreur lors de la création du commentaire" });
     }
 }
 
 //Get all reviews
 async function getAllReviews(req, res) {
     try {
-        const reviews = await db.Review.findAll({
-            attributes: {
-                include: [
-                    "id",
-                    "title",
-                    "author",
-                    "text",
-                    [
-                        Sequelize.fn(
-                            "DATE_FORMAT",
-                            Sequelize.col("date"),
-                            "%d-%m-%Y"
-                        ),
-                        "date",
-                    ],
-                ],
-            },
-        });
+        const reviews = await db.Review.findAll();
         res.status(200).json(reviews);
     } catch (error) {
         res.status(500).json("Database Error");
@@ -76,34 +68,7 @@ async function getAllReviews(req, res) {
 //Get one review
 async function getReview(req, res) {
     try {
-        const id = parseInt(req.params.id);
-
-        //check if id is ok
-        if (!id) {
-            return res.status(400).json({ message: "Paramètre manquant" });
-        }
-
-        //Retrieve the review
-        let review = await db.Review.findOne({
-            attributes: {
-                include: [
-                    "id",
-                    "title",
-                    "author",
-                    "text",
-                    [
-                        Sequelize.fn(
-                            "DATE_FORMAT",
-                            Sequelize.col("date"),
-                            "%d-%m-%Y"
-                        ),
-                        "date",
-                    ],
-                ],
-            },
-            where: { id: id },
-            raw: true,
-        });
+        let review = await db.Review.findByPk(req.params.id);
         if (!review) {
             return res.status(404).json({
                 message: "Ce commentaire n'est pas répertorié !",
@@ -118,46 +83,33 @@ async function getReview(req, res) {
 
 //Update Review
 async function updateReview(req, res) {
-    const id = parseInt(req.params.id);
-    let { title, author, text, date } = req.body;
-
     try {
-        //Check if id is ok
-        if (!id) {
-            return res.status(400).json({ message: "Paramètre manquant" });
-        }
-
+        let { isValidated } = req.body;
         //retrieve the review
-        let review = await db.Review.findOne(req.body, {
-            where: { id: id },
-            raw: true,
-        });
-        if (!review) {
+        let updatedReview = await db.Review.findByPk(req.params.id);
+        if (!updatedReview) {
             res.status(404).json({
                 message: "Le commentaire recherché n'est pas répertorié",
             });
         }
-
-        if (!title || !author || !text || !date) {
-            return res.send("Des données sont manquantes !");
-        }
+        console.log(updatedReview);
 
         //update
-        review = await db.Review.update(
+        updatedReview = await db.Review.update(
             {
-                title: title,
-                author: author,
-                text: text,
-                date: date,
+                ...updatedReview,
+                isValidated: true,
             },
             {
                 where: { id: id },
             }
         );
 
+        console.log("review mis à jour", updatedReview);
+
         res.json({
             message: "Commentaire mis à jour !",
-            data: review,
+            data: updatedReview,
         });
     } catch (error) {
         res.status(500).json("Database Error");
@@ -168,7 +120,7 @@ async function updateReview(req, res) {
 //Delete Review
 async function deleteReview(req, res) {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         //Check if id is OK
         if (!id) {
             return res.status(400).json({ message: "Paramètre manquant" });
@@ -180,14 +132,12 @@ async function deleteReview(req, res) {
             force: true,
         });
         if (!review) {
-            return res.status(404).json({
-                message: "Le commentaire recherché n'est pas répertorié",
-            });
+            return res
+                .status(404)
+                .json({
+                    message: "Le commentaire recherché n'est pas répertorié",
+                });
         }
-
-        res.status(200).json({
-            message: "Ce commentaire a été supprimé avec succès",
-        });
     } catch (error) {
         res.status(500).json({ message: "Database Error" });
         console.log(error);

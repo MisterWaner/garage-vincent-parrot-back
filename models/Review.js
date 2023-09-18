@@ -7,14 +7,25 @@ export default (sequelize) => {
     Review.init(
         {
             id: {
-                type: DataTypes.INTEGER,
-                autoIncrement: true,
+                type: DataTypes.UUID,
+                defaultValue: DataTypes.UUIDV4,
                 allowNull: false,
                 primaryKey: true,
             },
-            author: {
+            firstname: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            lastname: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            email: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                validate: {
+                    isEmail: true
+                }
             },
             title: {
                 type: DataTypes.STRING,
@@ -24,13 +35,19 @@ export default (sequelize) => {
                 type: DataTypes.TEXT,
                 allowNull: false,
             },
+            rating: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             date: {
                 type: DataTypes.DATEONLY,
                 allowNull: false,
-                validate: {
-                    isDate: true
-                }
             },
+            isValidated: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            }
         },
         {
             modelName: "review",
