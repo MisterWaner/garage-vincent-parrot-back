@@ -95,10 +95,11 @@ async function getOneMail(req, res) {
 /*************** UPDATE MAIL ********************/
 async function updateMail(req, res) {
     try {
+        const id = req.params.id;
         let { isRead } = req.body;
 
         //retrieve the mail
-        let updatedMail = await db.Mail.findByPk(req.params.id);
+        let updatedMail = await db.Mail.findByPk(id);
         if (!updatedMail) {
             res.status(404).json({
                 message: "Le mail recherché n'existe pas",

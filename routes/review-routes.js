@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
     addReview,
     getAllReviews,
+    getAllValidatedReviews,
     getReview,
     updateReview,
     deleteReview,
@@ -12,6 +13,7 @@ const reviewRouter = Router();
 
 reviewRouter.post("/", addReview);
 reviewRouter.get("/", getAllReviews);
+reviewRouter.get("/validated", getAllValidatedReviews);
 reviewRouter.get("/:id", getReview);
 reviewRouter.put("/:id", updateReview);
 reviewRouter.delete("/:id", deleteReview);
