@@ -13,6 +13,3 @@ GRANT ALL PRIVILEGES ON garage.* TO 'vincent.parrot'@'localhost' WITH GRANT OPTI
 FLUSH PRIVILEGES;
 
 USE garage;
-
-
-
