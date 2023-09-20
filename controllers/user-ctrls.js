@@ -191,8 +191,8 @@ const updatePassword = async (req, res) => {
 
         return res.status(200).json({
             message: "Mot de passe mis à jour",
-            data: updatedUser,
             password: password,
+            ...updatedUser
         });
     } catch (error) {
         console.log("Erreur lors de la mise à jour : ", error);
