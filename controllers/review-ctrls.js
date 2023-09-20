@@ -81,7 +81,8 @@ async function getAllValidatedReviews(req, res) {
 //Get one review
 async function getReview(req, res) {
     try {
-        let review = await db.Review.findByPk(req.params.id);
+        const id = req.params.id;
+        let review = await db.Review.findByPk(id);
         if (!review) {
             return res.status(404).json({
                 message: "Ce commentaire n'est pas répertorié !",

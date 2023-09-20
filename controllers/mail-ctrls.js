@@ -78,7 +78,8 @@ async function getAllMails(req, res) {
 /******************* GET ONE MAIL *****************/
 async function getOneMail(req, res) {
     try {
-        let mail = await db.Mail.findByPk(req.params.id);
+        const id = req.params.id;
+        let mail = await db.Mail.findByPk(id);
         if (!mail) {
             res.status(404).json({
                 message: "Ce mail n'existe pas",

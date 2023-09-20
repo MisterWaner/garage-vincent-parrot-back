@@ -202,7 +202,7 @@ const updatePassword = async (req, res) => {
 /************************ DELETE USER *********************************/
 async function deleteUser(req, res) {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         //Check if id is OK
         if (!id) {
             return res.status(400).json({ message: "Paramètre manquant" });
