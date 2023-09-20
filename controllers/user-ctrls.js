@@ -98,7 +98,7 @@ async function getUser(req, res) {
 /*********************** UPDATE USER *********************************/
 async function updateUser(req, res) {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         let { firstname, lastname, services, role } = req.body;
 
         //Check if id is ok
