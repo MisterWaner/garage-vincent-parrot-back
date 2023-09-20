@@ -4,9 +4,10 @@ import generateCarRefence from "../functions/generateCarReference.js";
 
 /************ Controllers  *************/
 
-//Add car
+/********** ADD CAR ***********/
 async function addCar(req, res) {
     try {
+        //Check if all fields are filled
         const {
             immat,
             brand,
@@ -50,7 +51,7 @@ async function addCar(req, res) {
 
         //Generate reference
         const reference = generateCarRefence(brand, model);
-        //Add car
+        //Car creation
         const newCar = await db.Car.create({
             immat: immat,
             brand: brand,

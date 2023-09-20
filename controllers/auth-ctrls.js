@@ -1,6 +1,7 @@
 import generateToken from "../functions/generateToken.js";
 import authenticate from "../functions/authenticate.js";
 
+//Controller for login, that authenticate user and generate a token
 const login = async (req, res) => {
     const { email, password } = req.body;
     const user = await authenticate(email, password);

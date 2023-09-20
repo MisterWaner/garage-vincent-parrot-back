@@ -51,7 +51,6 @@ app.use('/uploads', express.static(`${__dirname}/uploads`));
 import carRouter from "./routes/car-routes.js";
 import planningRouter from "./routes/planning-routes.js";
 import reviewRouter from "./routes/review-routes.js";
-import serviceRouter from "./routes/service-routes.js";
 import userRouter from "./routes/user-routes.js";
 import authRouter from "./routes/auth-routes.js";
 import mailRouter from "./routes/mail-routes.js";
@@ -64,7 +63,6 @@ app.get("/api", (req, res) => {
 //Routes
 app.use("/api/cars", carRouter);
 app.use("/api/reviews", reviewRouter);
-app.use("/api/services", serviceRouter);
 app.use("/api/users", userRouter);
 app.use("/api/login", authRouter);
 app.use("/api/mails", mailRouter);

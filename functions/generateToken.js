@@ -1,3 +1,4 @@
+// Desc: Generate a JWT token for the user
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 config();

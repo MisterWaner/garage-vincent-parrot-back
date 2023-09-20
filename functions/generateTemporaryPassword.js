@@ -1,3 +1,4 @@
+// Desc: Generate a temporary password for a new user
 const generateTemporaryPassword = (length) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

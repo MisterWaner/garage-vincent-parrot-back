@@ -1,4 +1,7 @@
 //Import modules
+
+//Create router for car
+
 import { Router } from "express";
 import {
     addCar,
@@ -8,6 +11,7 @@ import {
     deleteCar,
 } from "../controllers/car-ctrls.js";
 import upload from "../middleware/multerMiddleware.js";
+
 
 const carRouter = Router();
 

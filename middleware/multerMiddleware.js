@@ -1,3 +1,4 @@
+// Desc: Multer middleware for uploading files
 import multer from "multer";
 
 const storage = multer.diskStorage({

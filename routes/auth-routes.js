@@ -1,3 +1,4 @@
+// Purpose: to handle all routes for authentication
 import { Router } from "express";
 import { login } from "../controllers/auth-ctrls.js";
 

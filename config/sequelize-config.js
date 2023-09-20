@@ -9,7 +9,6 @@ config();
 
 import Car from "../models/Car.js";
 import Review from "../models/Review.js";
-import Service from "../models/Service.js";
 import Planning from "../models/Planning.js";   
 import User from "../models/User.js";
 import Mail from "../models/Mail.js";
@@ -35,7 +34,6 @@ db.Sequelize = Sequelize;
 db.User = User(sequelize);
 db.Car = Car(sequelize);
 db.Review = Review(sequelize);
-db.Service = Service(sequelize);
 db.Planning = Planning(sequelize);
 db.Mail = Mail(sequelize);
 

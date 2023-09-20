@@ -6,6 +6,7 @@ import db from "../config/sequelize-config.js";
 /************* CREATE PLANNING ***********/
 async function addPlanning(req, res) {
     try {
+        //Check if all fields are filled
         const {
             id,
             day,

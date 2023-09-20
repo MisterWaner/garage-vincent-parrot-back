@@ -1,4 +1,6 @@
 //import modules
+
+//create router for planning
 import { Router } from "express";
 import { addPlanning, getAllPlannings, getOnePlanning, deletePlanning, updatePlanning } from "../controllers/planning-ctrls.js";
 
