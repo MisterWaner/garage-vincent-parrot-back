@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import flash from "express-flash";
-import session from "express-session";
 import methodOverride from "method-override";
 import { config } from "dotenv";
 import db from "./config/sequelize-config.js";
@@ -28,13 +27,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(flash());
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: false,
-    })
-);
 app.use(
     cookieParser({
         origin: "*",
