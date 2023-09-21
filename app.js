@@ -66,7 +66,7 @@ db.sequelize
     .authenticate()
     .then(() => console.log("DB is connected"))
     .then(() => {
-        app.listen(process.env.SERVER_PORT || 3001, () => {
+        app.listen(process.env.SERVER_PORT || 3001, "0.0.0.0", () => {
             console.log(`Server is running on port ${process.env.SERVER_PORT || 3001}`);
         });
     })
