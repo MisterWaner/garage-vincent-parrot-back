@@ -11,6 +11,7 @@ import {fileURLToPath} from "url";
 
 config();
 const app = express();
+const port = process.env.SERVER_PORT || 3001;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -66,8 +67,8 @@ db.sequelize
     .authenticate()
     .then(() => console.log("DB is connected"))
     .then(() => {
-        app.listen(process.env.SERVER_PORT || 3001, "0.0.0.0", () => {
-            console.log(`Server is running on port ${process.env.SERVER_PORT || 3001}`);
+        app.listen(port, "0.0.0.0", () => {
+            console.log(`Server is running on port ${port}`);
         });
     })
     .catch((err) => console.log("error occured :", err));
