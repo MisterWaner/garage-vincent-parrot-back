@@ -35,7 +35,7 @@ async function addCar(req, res) {
         }
 
         //Generate image url
-        const imageUrl = `http://localhost:3001/uploads/cars/${req.file.filename}`;
+        const imageUrl = `https://garage-vincent-parrot-back-production.up.railway.app/uploads/cars/${req.file.filename}`;
 
         //Check if car is not already in DB
         const car = await db.Car.findOne({
