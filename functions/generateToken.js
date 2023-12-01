@@ -5,12 +5,13 @@ config();
 
 const generateToken = (user) => {
     //Set up the token
-    const maxAge = 3600000;
+    const maxAge = 3600000; //1 hour
     const jwtToken = jwt.sign(
         {
             id: user.id,
             email: user.email,
             role: user.role,
+            firstname: user.firstname
         },
         process.env.JWT_SECRET,
         { expiresIn: maxAge }

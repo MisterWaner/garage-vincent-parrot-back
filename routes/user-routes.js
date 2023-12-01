@@ -1,5 +1,3 @@
-//Import modules
-
 //Create router for user
 import { Router } from "express";
 import {

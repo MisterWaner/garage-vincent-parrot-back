@@ -20,9 +20,6 @@ const login = async (req, res) => {
         });
         res.status(200).json({
             token: token,
-            role: user.role,
-            firstname: user.firstname,
-            id: user.id,
             message: "Connexion reussie",
         });
     }
