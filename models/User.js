@@ -42,6 +42,7 @@ export default (sequelize) => {
             role: {
                 type: DataTypes.STRING,
                 allowNull: false,
+                defaultValue: "Employee"
             },
         },
         {

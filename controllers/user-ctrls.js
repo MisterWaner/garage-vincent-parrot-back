@@ -28,30 +28,58 @@ async function createUser(req, res) {
                 .json({ message: "Utilisateur déjà existant" });
         }
 
-        //generate password
-        const password = generateTemporaryPassword(64);
-        //Hash password
-        const hashedPassword = await bcrypt.hash(
-            password,
-            parseInt(process.env.BCRYPT_SALT_ROUND)
-        );
+        if (role === "Admin") {
+            const password = req.body.password;
+            //Check if password is valid
+            if (!password) {
+                return res.send("Des données sont manquantes");
+            }
+            //Hash password
+            const hashedPassword = await bcrypt.hash(
+                password,
+                parseInt(process.env.BCRYPT_SALT_ROUND)
+            );
+            //User creation
+            const newUser = await db.User.create({
+                email: generateEmail(firstname, lastname),
+                firstname: firstname,
+                lastname: lastname,
+                password: hashedPassword,
+                role: role,
+                services: services,
+            });
+            console.log(newUser);
+            return res.status(200).json({
+                message: "Utilisateur créé",
+                data: newUser,
+                password: password,
+            });
+        } else {
+            //generate password
+            const password = generateTemporaryPassword(25);
+            //Hash password
+            const hashedPassword = await bcrypt.hash(
+                password,
+                parseInt(process.env.BCRYPT_SALT_ROUND)
+            );
 
-        //User creation
-        const newUser = await db.User.create({
-            email: generateEmail(firstname, lastname),
-            firstname: firstname,
-            lastname: lastname,
-            password: hashedPassword,
-            role: role,
-            services: services,
-        });
+            //User creation
+            const newUser = await db.User.create({
+                email: generateEmail(firstname, lastname),
+                firstname: firstname,
+                lastname: lastname,
+                password: hashedPassword,
+                role: role,
+                services: services,
+            });
 
-        console.log(newUser);
-        return res.status(200).json({
-            message: "Utilisateur créé",
-            data: newUser,
-            password: password,
-        });
+            console.log(newUser);
+            return res.status(200).json({
+                message: "Utilisateur créé",
+                data: newUser,
+                password: password,
+            });
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Erreur lors de la création" });
@@ -72,7 +100,7 @@ async function getAllUsers(req, res) {
 /********************* GET ONE USER ***********************************/
 async function getUser(req, res) {
     try {
-        const id = parseInt(req.params.id);
+        const id = req.params.id;
         //check if id is ok
         if (!id) {
             return res.status(400).json({ message: "Paramètre manquant" });
@@ -84,7 +112,7 @@ async function getUser(req, res) {
             raw: true,
         });
         if (!user) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "Cet utilisateur n'existe pas",
             });
         }
@@ -192,7 +220,7 @@ const updatePassword = async (req, res) => {
         return res.status(200).json({
             message: "Mot de passe mis à jour",
             password: password,
-            ...updatedUser
+            ...updatedUser,
         });
     } catch (error) {
         console.log("Erreur lors de la mise à jour : ", error);
